@@ -91,4 +91,9 @@ body {
     transform-origin: 0 0;
     transform: translateX(100vw) rotate(90deg);
   }
+  /* 눕힌 화면의 가로 길이는 화면의 긴 변(100dvh)이므로 16:10 한도도 그 기준으로 */
+  .stage {
+    max-height: 62.5vh;
+    max-height: 62.5dvh;
+  }
 }

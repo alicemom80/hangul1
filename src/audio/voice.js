@@ -112,30 +112,48 @@ function koreanVoice() {
   return cachedVoice;
 }
 
+// 안드로이드 크롬은 ① cancel() 바로 뒤의 speak()를 조용히 버리고 ② 읽는 중인 문장 객체를 아무 데도 붙잡고 있지 않으면
+// 정리해 버려 소리가 끊기거나 안 난다. 그래서 잠깐 쉬었다가 읽고, 문장 객체는 끝날 때까지 붙잡아 둔다.
+const SPEAK_DELAY_MS = 80;
+let speakToken = 0;
+let speaking = null; // 지금 읽는 문장 (끝날 때까지 붙잡아 둔다)
+
 function speak(text) {
   const synth = globalThis.speechSynthesis;
   if (!synth || !globalThis.SpeechSynthesisUtterance) return finishSpeech();
   // 앞 문장을 멈출 때 그 문장의 끝 알림이 늦게 와도, 지금 문장의 끝으로 착각하지 않게
   const mine = endSpeech;
   const done = () => mine && mine === endSpeech && finishSpeech();
-  try {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    utterance.rate = 0.92;
-    utterance.pitch = 1.15;
-    const voice = koreanVoice();
-    if (voice) utterance.voice = voice;
-    utterance.onend = done;
-    utterance.onerror = done;
-    synth.speak(utterance);
-  } catch (error) {
-    console.warn('[voice] 음성을 읽을 수 없습니다.', error);
-    done();
-  }
+  const token = speakToken;
+  setTimeout(() => {
+    if (token !== speakToken) return; // 그 사이 멈췄거나 다른 말이 시작됨
+    try {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 0.92;
+      utterance.pitch = 1.15;
+      const voice = koreanVoice();
+      if (voice) utterance.voice = voice;
+      const release = () => {
+        if (speaking === utterance) speaking = null;
+        done();
+      };
+      utterance.onend = release;
+      utterance.onerror = release;
+      speaking = utterance;
+      synth.resume?.(); // 크롬이 멈춘 채로 남는 경우를 푼다
+      synth.speak(utterance);
+    } catch (error) {
+      console.warn('[voice] 음성을 읽을 수 없습니다.', error);
+      done();
+    }
+  }, SPEAK_DELAY_MS);
 }
 
 // ---------- 밖에서 쓰는 기능 ----------
 export function stopVoice() {
+  speakToken += 1;
+  speaking = null;
   stopAudio();
   finishSpeech(); // 기다리던 쪽은 "끝났다"로 받는다
   try {

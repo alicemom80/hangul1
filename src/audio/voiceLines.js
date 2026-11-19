@@ -37,6 +37,7 @@ function build() {
     ...ANIMALS.map((a) => line('이름표 붙이기', `tag-right-${a.key}`, S.tagRight(a.name))),
 
     ...ANIMALS.map((a) => line('글자 쓰기', `write-ask-${a.key}`, S.writeAsk(a))),
+    line('글자 쓰기', 'write-start-hint', S.WRITE_START_HINT),
     line('글자 쓰기', 'write-hint', S.WRITE_HINT),
     ...ANIMALS.map((a) => line('글자 쓰기', `write-done-${a.key}`, S.writeDone(a))),
 

@@ -1,27 +1,55 @@
-// 글자 쓰기: 왼쪽에 글자에 해당하는 동물, 오른쪽에 큰 흐린 글자. 손가락으로 따라 쓰면 글자를 충분히 덮었을 때 성공.
+// 글자 쓰기(선 따라 그리기): 왼쪽에 글자에 해당하는 동물, 오른쪽에 큰 점선 자음. 초록 점에서 시작해 획 순서대로 따라 쓴다.
+// 너그럽게 판정한다(lineTrace.js): 벗어나면 멈추고 기다릴 뿐 틀림은 없다. 가만있으면 노란 점이 지금 획을 한 번 보여 준다.
 import { h, art } from '@공통/widgets/dom.js';
 import { ANIMALS } from '../data/zoo1.js';
+import { strokesOf } from '../data/strokes.js';
 import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';
+import { buildPath, pointAt, startTrace, pressTrace, moveTrace, releaseTrace, isDone } from './lineTrace.js';
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
 const ROUNDS = 3;
-const SIZE = 480; // 쓰는 판의 그림 크기(픽셀). 화면에 보이는 크기는 CSS가 정한다.
-const PEN = 40; // 펜 굵기
-const GUIDE_FONT = `${Math.round(SIZE * 0.78)}px Jua, 'Malgun Gothic', sans-serif`;
-const NEED_COVER = 0.55; // 흐린 글자 중 이만큼 덮으면 성공
-const HINT_AFTER_MS = 12000;
-const INK = '#ff7a59';
+const TOLERANCE = 11;
+const START_DOT = 5.5;
+const ARROW_AT = 12; // 시작 화살표를 놓는 거리 (길을 따라)
+const IDLE_HINT_MS = 5000;
+const DEMO_MS = 2000;
+const DEMO_STEP_MS = 40;
+const MAX_DEMOS = 2; // 가만있기 안내는 한 글자에 이만큼만
+const START_HINT_GAP_MS = 3000; // "초록 점을 눌러" 안내를 너무 자주 하지 않게
+const NEXT_WAIT_MS = 500;
+const VIEW_BOX = '-8 -8 116 116';
 
-/** 흐린 글자(guide)의 어느 부분을 ink가 덮었는지 비율 */
-export function coverage(guideData, inkData) {
-  let total = 0;
-  let covered = 0;
-  for (let i = 3; i < guideData.length; i += 4) {
-    if (guideData[i] < 20) continue; // 흐린 글자(투명도 0.22)도 글자 자리로 센다
-    total += 1;
-    if (inkData[i] > 0) covered += 1;
-  }
-  return total === 0 ? 0 : covered / total;
+function svg(tag, attrs = {}, ...children) {
+  const node = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, String(v)));
+  node.append(...children);
+  return node;
+}
+
+const dOf = (points) => points.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+const placeAt = (node, [x, y]) => node.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+
+/** 획 하나: 하얀 바탕길 + 점선 + 채워지는 색 선 */
+function strokeLayer(path) {
+  const d = dOf(path.points);
+  const fill = svg('path', { class: 'lfill', d, pathLength: path.length, 'stroke-dasharray': `${path.length} ${path.length + 1}` });
+  const draw = (reached) => {
+    fill.setAttribute('stroke-dashoffset', String(path.length - reached));
+    fill.style.visibility = reached > 0 ? '' : 'hidden';
+  };
+  draw(0);
+  return { bed: svg('path', { class: 'lbed', d }), guide: svg('path', { class: 'lguide', d }), fill, draw };
+}
+
+/** 시작 화살표: 획이 처음 나아가는 방향을 가리킨다 */
+function placeArrow(arrow, path) {
+  const at = Math.min(ARROW_AT, path.length / 2);
+  const [ax, ay] = pointAt(path, at - 2);
+  const [bx, by] = pointAt(path, at + 2);
+  const deg = (Math.atan2(by - ay, bx - ax) * 180) / Math.PI;
+  const [x, y] = pointAt(path, at);
+  arrow.setAttribute('transform', `translate(${x} ${y}) rotate(${deg})`);
 }
 
 export const writeScreen = defineGame({
@@ -29,104 +57,157 @@ export const writeScreen = defineGame({
   menuPage: 1,
   build(field, app, ctx) {
     const targets = shuffle(ANIMALS).slice(0, ROUNDS);
-    let round = 0;
-    let busy = true;
-    let drawing = false;
-    let last = null;
-    let current = null;
-    let hintTimer = null;
-
     const animalBox = el('div', 'wr-animal');
-    const guide = h('canvas', { class: 'wr-guide', width: SIZE, height: SIZE });
-    const ink = h('canvas', { class: 'wr-ink', width: SIZE, height: SIZE, 'aria-label': '글자를 쓰는 판' });
-    const eraser = h('button', { class: 'wr-erase press', 'aria-label': '지우기', onclick: clearInk }, '↺');
-    const board = el('div', 'wr-board', guide, ink, eraser);
+    const board = el('div', 'wr-board');
     field.append(animalBox, board);
+    let round = 0;
 
-    const gctx = guide.getContext('2d', { willReadFrequently: true });
-    const ictx = ink.getContext('2d', { willReadFrequently: true });
-    ictx.lineCap = 'round';
-    ictx.lineJoin = 'round';
-    ictx.lineWidth = PEN;
-    ictx.strokeStyle = INK;
-
-    function clearInk() {
-      ictx.clearRect(0, 0, SIZE, SIZE);
-    }
-
-    async function startRound() {
-      current = targets[round];
-      app.bar.setDots(round, ROUNDS);
-      animalBox.replaceChildren(
-        art('character', current.key, { class: 'pic' }),
-        h('span', { class: 'lbl' }, current.name),
-        h('span', { class: 'let' }, `${current.letter} ${current.letterName}`),
+    function startRound() {
+      const animal = targets[round];
+      const paths = strokesOf(animal.letter).map(buildPath);
+      const layers = paths.map(strokeLayer);
+      const start = svg('g', { class: 'lstart' }, svg('circle', { r: START_DOT }));
+      const arrow = svg('polygon', { class: 'larrow', points: '-3.2,-3.6 3.8,0 -3.2,3.6' });
+      const hintDot = svg('circle', { class: 'lhint', r: 4 });
+      const canvas = svg(
+        'svg',
+        { class: 'lineq wr-trace', viewBox: VIEW_BOX, role: 'img', 'aria-label': `${animal.letterName} 따라 쓰기` },
+        ...layers.map((l) => l.bed), ...layers.map((l) => l.guide), ...layers.map((l) => l.fill), start, arrow, hintDot,
       );
-      busy = true;
-      clearInk();
-      await document.fonts?.load(GUIDE_FONT).catch(() => {});
-      gctx.clearRect(0, 0, SIZE, SIZE);
-      gctx.font = GUIDE_FONT;
-      gctx.textAlign = 'center';
-      gctx.textBaseline = 'middle';
-      gctx.fillStyle = 'rgba(58, 42, 28, 0.22)';
-      gctx.fillText(current.letter, SIZE / 2, SIZE * 0.54);
-      if (!(await ctx.say(S.writeAsk(current)))) return;
-      busy = false;
-      const mine = round;
-      clearTimeout(hintTimer);
-      hintTimer = setTimeout(() => ctx.alive() && round === mine && !busy && ctx.say(S.WRITE_HINT), HINT_AFTER_MS);
-    }
 
-    /** 손가락 자리를 판 안의 좌표로. offsetX/Y는 눕혀 놓은 화면에서도 판 기준이다. */
-    const point = (ev) => {
-      const k = SIZE / ink.offsetWidth;
-      return { x: ev.offsetX * k, y: ev.offsetY * k };
-    };
-
-    ink.addEventListener('pointerdown', (ev) => {
-      if (busy) return;
-      ev.preventDefault();
-      ink.setPointerCapture?.(ev.pointerId);
-      drawing = true;
-      last = point(ev);
-      ictx.beginPath();
-      ictx.arc(last.x, last.y, PEN / 2, 0, Math.PI * 2);
-      ictx.fillStyle = INK;
-      ictx.fill();
-    });
-    ink.addEventListener('pointermove', (ev) => {
-      if (!drawing) return;
-      const p = point(ev);
-      ictx.beginPath();
-      ictx.moveTo(last.x, last.y);
-      ictx.lineTo(p.x, p.y);
-      ictx.stroke();
-      last = p;
-    });
-    const lift = () => {
-      if (!drawing) return;
-      drawing = false;
-      check();
-    };
-    ink.addEventListener('pointerup', lift);
-    ink.addEventListener('pointercancel', lift);
-
-    async function check() {
-      if (busy) return;
-      const done = coverage(gctx.getImageData(0, 0, SIZE, SIZE).data, ictx.getImageData(0, 0, SIZE, SIZE).data);
-      if (done < NEED_COVER) return;
-      busy = true;
-      clearTimeout(hintTimer);
-      guide.classList.add('done');
-      app.sfx.yes();
-      round += 1;
+      animalBox.replaceChildren(
+        art('character', animal.key, { class: 'pic' }),
+        h('span', { class: 'lbl' }, animal.name),
+        h('span', { class: 'let' }, `${animal.letter} ${animal.letterName}`),
+      );
+      board.replaceChildren(canvas);
       app.bar.setDots(round, ROUNDS);
-      if (!(await ctx.say(S.writeDone(current)))) return;
-      if (!(await ctx.wait(500))) return;
-      guide.classList.remove('done');
-      if (round >= ROUNDS) app.finish('write');
-      else startRound();
+      ctx.say(S.writeAsk(animal));
+
+      let index = 0;
+      let trace = startTrace();
+      let finished = false;
+      let idleTimer = null;
+      let demoTimer = null;
+      let demos = 0;
+      let lastStartHint = 0;
+      const opts = { tolerance: TOLERANCE };
+      const alive = () => ctx.alive() && canvas.isConnected && !finished;
+
+      function showStart() {
+        placeAt(start, pointAt(paths[index], trace.reached));
+        placeArrow(arrow, paths[index]);
+        arrow.style.visibility = trace.reached > 0 ? 'hidden' : '';
+      }
+
+      function stopDemo() {
+        clearInterval(demoTimer);
+        demoTimer = null;
+        hintDot.classList.remove('on');
+      }
+
+      function armIdle() {
+        clearTimeout(idleTimer);
+        if (demos >= MAX_DEMOS) return;
+        idleTimer = setTimeout(() => {
+          if (!alive() || trace.active) return;
+          demos += 1;
+          if (demos > 1) ctx.say(S.WRITE_HINT); // 첫 안내는 말 없이 점만 (방금 들은 설명과 겹치지 않게)
+          const path = paths[index];
+          const from = trace.reached;
+          const began = Date.now();
+          hintDot.classList.add('on');
+          demoTimer = setInterval(() => {
+            const t = Math.min((Date.now() - began) / DEMO_MS, 1);
+            if (!alive()) return stopDemo();
+            placeAt(hintDot, pointAt(path, from + (path.length - from) * t));
+            if (t >= 1) {
+              stopDemo();
+              armIdle();
+            }
+          }, DEMO_STEP_MS);
+        }, IDLE_HINT_MS);
+      }
+
+      async function finishLetter() {
+        finished = true;
+        clearTimeout(idleTimer);
+        stopDemo();
+        start.remove();
+        arrow.remove();
+        canvas.classList.add('done');
+        app.sfx.yes();
+        round += 1;
+        app.bar.setDots(round, ROUNDS);
+        if (!(await ctx.say(S.writeDone(animal)))) return;
+        if (!(await ctx.wait(NEXT_WAIT_MS))) return;
+        if (round >= ROUNDS) app.finish('write');
+        else startRound();
+      }
+
+      function nextStroke() {
+        layers[index].draw(paths[index].length);
+        app.sfx.pop();
+        index += 1;
+        trace = startTrace();
+        canvas.classList.remove('drawing');
+        if (index < paths.length) {
+          showStart();
+          armIdle();
+        } else finishLetter();
+      }
+
+      /** 눕혀 놓은 화면에서도 손가락 자리를 판 안의 좌표로 바꾼다 */
+      const toLocal = (e) => {
+        const m = canvas.getScreenCTM();
+        if (!m) return null;
+        const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+        return [p.x, p.y];
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (finished) return;
+        const p = toLocal(e);
+        if (!p) return;
+        e.preventDefault();
+        clearTimeout(idleTimer);
+        stopDemo();
+        trace = pressTrace(paths[index], trace, p, opts);
+        if (trace.active) {
+          canvas.setPointerCapture?.(e.pointerId);
+          canvas.classList.add('drawing');
+          return;
+        }
+        start.classList.remove('hl'); // 엉뚱한 곳을 눌렀으면 이어 쓸 자리를 반짝인다
+        void start.getBoundingClientRect();
+        start.classList.add('hl');
+        if (Date.now() - lastStartHint > START_HINT_GAP_MS) {
+          lastStartHint = Date.now();
+          ctx.say(S.WRITE_START_HINT);
+        }
+        armIdle();
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!trace.active || finished) return;
+        const p = toLocal(e);
+        if (!p) return;
+        trace = moveTrace(paths[index], trace, p, opts);
+        layers[index].draw(trace.reached);
+        showStart();
+        if (isDone(paths[index], trace)) nextStroke();
+      });
+
+      const release = () => {
+        if (!trace.active || finished) return;
+        trace = releaseTrace(trace);
+        canvas.classList.remove('drawing');
+        armIdle();
+      };
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => canvas.addEventListener(ev, release));
+
+      showStart();
+      armIdle();
     }
 
     startRound();

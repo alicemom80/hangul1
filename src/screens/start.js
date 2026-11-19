@@ -1,6 +1,9 @@
 // 시작 화면: 사바나 배경 위에 자음 글자들이 떠다니고, 코코와 제목, ▶
 import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { GREETING } from '../audio/script.js';
+import { openInDefaultBrowser } from '../app/inapp.js';
+
+const MOVE_WAIT_MS = 1500; // 기본 브라우저가 열렸다면 이 안에 이 화면은 가려진다. 그대로면 열기가 막힌 것
 
 /**
  * ▶를 누르면 주소창 없는 전체 화면 (+ 가로 고정을 지원하는 기기는 가로로).
@@ -29,11 +32,21 @@ export const startScreen = {
   showBar: false,
   background: 'savanna-base',
   render(root, app) {
-    const start = () => {
+    const begin = () => {
       enterFullscreen();
       app.startSound();
       app.go('menu');
       app.say(GREETING);
+    };
+    const start = () => {
+      // 카카오톡 같은 앱 안 브라우저면 휴대폰의 기본 브라우저로 다시 열어 준다
+      const opened = openInDefaultBrowser();
+      if (opened === 'moved') {
+        setTimeout(() => !document.hidden && root.isConnected && begin(), MOVE_WAIT_MS);
+        return;
+      }
+      if (opened === 'manual') app.toast('오른쪽 아래 ⋯ 메뉴에서 "Safari로 열기"를 누르면 더 잘 돼요');
+      begin();
     };
     // 링크를 열자마자는 브라우저가 막으므로, 시작 화면 어디든 처음 누르는 순간 전체 화면으로
     root.addEventListener('pointerdown', enterFullscreen, { once: true });

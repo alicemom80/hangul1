@@ -35,8 +35,9 @@ export const TAG_WRONG = '다른 친구일까? 다시 해 보자!';
 export const tagRight = (name) => `${name}! 이름표를 붙였어!`;
 
 // 글자 쓰기
-export const writeAsk = (animal) => `${animal.name}! ${animal.letterName}을 손가락으로 따라 써 보자!`;
-export const WRITE_HINT = '흐린 글자를 따라 그려 봐!';
+export const writeAsk = (animal) => `${animal.name}! ${animal.letterName}을 점선을 따라 써 보자!`;
+export const WRITE_START_HINT = '초록 점을 꾹 누르고 시작해 봐!';
+export const WRITE_HINT = '노란 점을 따라 그려 봐!';
 export const writeDone = (animal) => `${animal.letterName}! 정말 잘 썼어!`;
 
 // 빈칸 채우기

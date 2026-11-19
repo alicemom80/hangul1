@@ -627,33 +627,73 @@
   box-shadow: 0 1.2cqh 0 rgba(58, 42, 28, 0.25);
   overflow: hidden;
 }
-.wr-guide,
-.wr-ink {
+.wr-trace {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  --line: #ff7a59;
 }
-.wr-ink {
-  touch-action: none;
-  cursor: crosshair;
-}
-.wr-guide.done {
+.wr-trace.done .lfill {
   filter: drop-shadow(0 0 2cqh #ffd23f);
 }
-.wr-erase {
-  position: absolute;
-  left: 1.6cqh;
-  bottom: 1.6cqh;
-  width: 10cqh;
-  height: 10cqh;
-  border-radius: 50%;
-  border: 0.5cqh solid var(--ink);
-  background: #fff;
-  font-size: 7cqh;
-  line-height: 1;
-  color: var(--ink);
-  font-family: var(--font);
+
+/* 선 따라 그리기: 하얀 바탕길 위에 점선, 지나간 만큼 채워지는 색 선(--line), 초록 시작 점, 노란 안내 점 */
+.lineq {
+  display: block;
+  touch-action: none; /* 긋는 동안 화면이 같이 끌려가지 않게 */
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: visible;
+}
+.lineq path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lbed {
+  stroke: rgb(255 255 255 / 60%);
+  stroke-width: 16;
+}
+.lguide {
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-dasharray: 0.1 5;
+  opacity: 0.6;
+}
+.lfill {
+  stroke: var(--line);
+  stroke-width: 9;
+}
+.lstart circle {
+  fill: var(--leaf);
+  stroke: var(--ink);
+  stroke-width: 0.8;
+}
+.lstart.hl circle {
+  animation: lstart-pulse 0.5s ease-in-out 3;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes lstart-pulse {
+  50% {
+    scale: 1.5;
+  }
+}
+.larrow {
+  fill: var(--leaf);
+  stroke: var(--ink);
+  stroke-width: 0.6;
+}
+.lhint {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 0.6;
+  opacity: 0;
+  pointer-events: none;
+}
+.lhint.on {
+  opacity: 1;
 }
 
 /* ----- 빈칸 채우기 ----- */

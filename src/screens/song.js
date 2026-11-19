@@ -44,7 +44,7 @@ export const songScreen = {
     const nxt = h('div', { class: 'nxt' });
     const vb = h('div', { class: 'vb' });
     const pp = h('button', { class: 'rb pp', 'aria-label': '재생 멈춤' }, '⏸');
-    const home = h('button', { class: 'rb homeb', 'aria-label': '놀이 고르기' }, art('icon', 'home', { class: 'ico' }));
+    const home = h('button', { class: 'backbtn press homeb', 'aria-label': '놀이 고르기' }, art('icon', 'back', { class: 'ico' }));
     const field = h('div', { class: 'field song' },
       h('div', { class: 'scenes' }, ...scenes), koko, big, vb, h('div', { class: 'lyric' }, cur, nxt), pp, home);
     root.append(field);
@@ -158,7 +158,7 @@ export const songScreen = {
     pp.addEventListener('pointerdown', () => {
       if (au.paused) { pieceEnd = null; play(); } else au.pause();
     });
-    home.addEventListener('pointerdown', () => app.go('menu'));
+    home.addEventListener('pointerdown', () => { app.sfx.pop(); app.go('menu'); });
 
     app.startSound();
     au.currentTime = 0;

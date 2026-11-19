@@ -63,4 +63,5 @@
 .song .rb { position: absolute; border: calc(var(--u) * 0.45) solid #3b4660; border-radius: 50%; background: #ff7aa8; color: #fff; font-size: calc(var(--u) * 4.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 calc(var(--u) * 0.5) 0 #3b4660; }
 .song .rb:active { transform: translateY(calc(var(--u) * 0.4)); }
 .song .pp { left: calc(var(--u) * 2.2); top: calc(var(--u) * 2.2); width: calc(var(--u) * 8); height: calc(var(--u) * 8); }
-.song .homeb { right: calc(var(--u) * 2.2); bottom: calc(var(--u) * 2.2); width: calc(var(--u) * 6.4); height: calc(var(--u) * 6.4); background: #fff; padding: calc(var(--u) * 1.1); }
+/* 뒤로가기 버튼: 다른 놀이의 .bar .backbtn과 같은 크기·자리 (오른쪽 아래) */
+.song .homeb { position: absolute; right: 3cqh; bottom: 3cqh; margin: 0; }

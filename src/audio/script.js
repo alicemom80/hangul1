@@ -20,7 +20,7 @@ export const SOUND_RETRY = '다시 한번 들어 보자!';
 export const soundRight = (name) => `${name}! 맞아!`;
 
 // 박수 놀이
-export const clapAsk = (name) => `${name}! 같이 박수를 쳐 보자!`;
+export const clapAsk = (name) => `${name}! 코코를 톡톡 눌러서 박수를 쳐 봐!`;
 export const CLAP_HINT = '코코를 톡톡 눌러서 박수를 쳐 봐!';
 export const clapDone = (name) => `${name}! 박수 짝짝짝! 잘했어!`;
 

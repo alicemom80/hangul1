@@ -227,7 +227,7 @@
   width: 56cqh;
   height: 56cqh;
   box-sizing: border-box;
-  background: #fff8dc;
+  background: #bfe6f2; /* 조각(크림색)이 잘 보이게 하늘색 바탕 */
   border: 0.6cqh solid var(--ink);
   border-radius: 3cqh;
 }

@@ -165,8 +165,10 @@ export const writeScreen = defineGame({
         return [p.x, p.y];
       };
 
+      let activePointer = null; // 지금 긋고 있는 손가락(포인터) 번호 — 다른 손가락은 무시한다
+
       canvas.addEventListener('pointerdown', (e) => {
-        if (finished) return;
+        if (finished || activePointer !== null) return;
         const p = toLocal(e);
         if (!p) return;
         e.preventDefault();
@@ -174,7 +176,8 @@ export const writeScreen = defineGame({
         stopDemo();
         trace = pressTrace(paths[index], trace, p, opts);
         if (trace.active) {
-          canvas.setPointerCapture?.(e.pointerId);
+          activePointer = e.pointerId;
+          try { canvas.setPointerCapture?.(e.pointerId); } catch { /* 잡지 못해도 긋기는 계속된다 */ }
           canvas.classList.add('drawing');
           return;
         }
@@ -189,7 +192,7 @@ export const writeScreen = defineGame({
       });
 
       canvas.addEventListener('pointermove', (e) => {
-        if (!trace.active || finished) return;
+        if (!trace.active || finished || e.pointerId !== activePointer) return;
         const p = toLocal(e);
         if (!p) return;
         trace = moveTrace(paths[index], trace, p, opts);
@@ -198,13 +201,17 @@ export const writeScreen = defineGame({
         if (isDone(paths[index], trace)) nextStroke();
       });
 
-      const release = () => {
+      // 주의: lostpointercapture는 듣지 않는다. 터치는 누른 요소에 자동으로 포인터가 잡혀 있어서,
+      // 위에서 다시 잡을 때 이 이벤트가 곧바로 올라와 긋기가 끊겨 버린다.
+      const release = (e) => {
+        if (e.pointerId !== activePointer) return;
+        activePointer = null;
         if (!trace.active || finished) return;
         trace = releaseTrace(trace);
         canvas.classList.remove('drawing');
         armIdle();
       };
-      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => canvas.addEventListener(ev, release));
+      ['pointerup', 'pointercancel'].forEach((ev) => canvas.addEventListener(ev, release));
 
       showStart();
       armIdle();

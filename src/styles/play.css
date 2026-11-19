@@ -1,0 +1,768 @@
+/* 놀이 화면 공통 + 시작·메뉴 + 놀이 5가지. 크기는 무대 높이 기준(cqh).
+   .field = 16:10 놀이판(가로 160cqh × 세로 100cqh)을 무대 가운데에 놓는다. 넓은 화면은 양옆만 더 보인다. */
+.screen {
+  padding: 0;
+}
+.field {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 160cqh;
+  height: 100cqh;
+  transform: translateX(-50%);
+  --u: 1.6cqh; /* 시제품(가로 100u)과 같은 단위 */
+}
+
+/* 위쪽 막대: 놀이 고르기로 돌아가는 버튼 (설정 버튼 옆) */
+.bar {
+  inset: 0;
+  height: auto;
+}
+.bar .backbtn {
+  position: absolute;
+  right: 3cqh;
+  bottom: 3cqh;
+  margin: 0;
+}
+.backbtn {
+  width: 13cqh;
+  height: 13cqh;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 1.6cqh;
+  box-sizing: border-box;
+  box-shadow: 0 0.8cqh 0 rgba(58, 42, 28, 0.2);
+}
+.backbtn[hidden] {
+  display: none;
+}
+.qdots {
+  display: flex;
+  gap: 1.4cqh;
+  align-items: center;
+  height: 8cqh;
+}
+.qdots i {
+  width: 3.6cqh;
+  height: 3.6cqh;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.4cqh solid var(--ink);
+  box-sizing: border-box;
+}
+.qdots i.on {
+  background: var(--sun);
+}
+
+/* 시작 화면 */
+.start .floater {
+  position: absolute;
+  font-weight: 400;
+  text-shadow: 0.5cqh 0.5cqh 0 #fff, -0.5cqh 0.5cqh 0 #fff, 0.5cqh -0.5cqh 0 #fff, -0.5cqh -0.5cqh 0 #fff, 0 0.9cqh 0 rgba(58, 42, 28, 0.35);
+  animation: bob 3s ease-in-out infinite;
+}
+.start h1 {
+  text-align: center;
+  line-height: 1.15;
+}
+.start h1 small {
+  display: block;
+  font-size: 4.6cqh;
+}
+.start .hero {
+  height: 40cqh;
+}
+
+/* 메뉴: 나무 버튼 8개를 4칸 × 2줄로 (버튼 그림은 props/menu-*.webp) */
+.menu-grid {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(4, 31cqh);
+  gap: 4cqh 4.5cqh;
+}
+.menu-card {
+  position: relative;
+  width: 31cqh;
+  height: 29.5cqh;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 6cqh;
+  filter: drop-shadow(0 0.8cqh 0 rgba(58, 42, 28, 0.25));
+}
+.menu-card > img:first-child {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+.card-art {
+  position: absolute;
+  inset: 15% 14% 17%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  color: var(--ink);
+}
+.card-pencil {
+  position: absolute;
+  left: 6%;
+  top: 6%;
+  width: 36%;
+  transform: rotate(-8deg);
+}
+.card-letter {
+  position: absolute;
+  right: 6%;
+  bottom: 12%;
+  font-size: 11cqh;
+  line-height: 1;
+}
+.card-blank {
+  position: absolute;
+  left: 6%;
+  top: 22%;
+  width: 40%;
+  height: 52%;
+  box-sizing: border-box;
+  border: 0.6cqh dashed #2a4bd7;
+  border-radius: 1.4cqh;
+  background: #e8ecff;
+}
+.card-vowel {
+  position: absolute;
+  right: 8%;
+  top: 18%;
+  font-size: 12.5cqh;
+  line-height: 1.1;
+}
+.menu-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.menu-star {
+  position: absolute;
+  right: -1cqh;
+  top: -1cqh;
+  width: 9cqh;
+  height: 9cqh;
+  filter: drop-shadow(0 0.5cqh 0 rgba(58, 42, 28, 0.3));
+}
+
+/* ----- 그림 퍼즐 ----- */
+.pz-board {
+  position: absolute;
+  left: 14cqh;
+  top: 22cqh;
+  width: 56cqh;
+  height: 56cqh;
+  background: #fff8dc;
+  border: 0.6cqh solid var(--ink);
+  border-radius: 3cqh;
+  overflow: hidden;
+}
+.pz-slots,
+.pz-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.pz-lines {
+  pointer-events: none;
+}
+.pz-lines path {
+  stroke: #3b8f9c;
+  stroke-width: 0.8;
+  fill: none;
+}
+.sl {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.35);
+}
+.sl .pf,
+.pci .pf {
+  position: absolute;
+  inset: 0;
+  background: #fff8dc;
+}
+.sl .pf {
+  opacity: 0.18; /* 빈 자리에 흐릿한 밑그림 */
+  transition: opacity 0.3s;
+}
+.sl.on .pf {
+  opacity: 1;
+}
+.pf img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+.sl.hint {
+  background: rgba(255, 226, 122, 0.85);
+}
+.pz-sign {
+  position: absolute;
+  left: 14cqh;
+  top: 80cqh;
+  width: 56cqh;
+  text-align: center;
+  font-size: 12cqh;
+  color: var(--ink);
+  text-shadow: 0 0 1cqh #fff, 0 0 1cqh #fff;
+}
+.pz-tray {
+  position: absolute;
+  left: 84cqh;
+  top: 22cqh;
+  width: 56cqh;
+  height: 56cqh;
+  box-sizing: border-box;
+  background: #fff8dc;
+  border: 0.6cqh solid var(--ink);
+  border-radius: 3cqh;
+}
+.pc {
+  position: absolute;
+  width: 28cqh;
+  height: 28cqh;
+  touch-action: none;
+  cursor: grab;
+  transition: transform 0.25s;
+}
+.pc.drag {
+  z-index: 5;
+  filter: drop-shadow(0 0.8cqh 0.8cqh rgba(0, 0, 0, 0.3));
+}
+.pc.hint {
+  filter: drop-shadow(0 0 1.4cqh #ffd23f);
+}
+.pc.done {
+  display: none;
+}
+.pci {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 56cqh;
+  height: 56cqh;
+  transform: scale(0.5);
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+/* ----- 소리 맞히기 ----- */
+.sd-koko {
+  position: absolute;
+  left: 4cqh;
+  bottom: 3cqh;
+  height: 48cqh;
+  animation: bob 2.4s ease-in-out infinite;
+}
+.sd-ear {
+  position: absolute;
+  left: 34cqh;
+  top: 22cqh;
+  width: 17cqh;
+  height: 17cqh;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.6cqh solid var(--ink);
+  box-sizing: border-box;
+  padding: 2.4cqh;
+  box-shadow: 0 0.8cqh 0 rgba(58, 42, 28, 0.25);
+}
+.sd-cards {
+  position: absolute;
+  left: 58cqh;
+  top: 22cqh;
+  display: flex;
+  gap: 4cqh;
+}
+.sd-card {
+  width: 34cqh;
+  height: 56cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4cqh;
+  background: var(--card);
+  border: 0.6cqh solid var(--ink);
+  box-shadow: 0 1cqh 0 rgba(58, 42, 28, 0.25);
+  box-sizing: border-box;
+  padding: 2cqh;
+}
+.sd-card .pic {
+  flex: none;
+  width: 100%;
+  height: 38cqh;
+  object-fit: contain; /* 동물마다 그림 크기가 달라도 같은 칸 안에 맞춘다 */
+}
+.sd-card .lbl {
+  margin-top: 1.4cqh;
+  font-size: 9cqh;
+  line-height: 1;
+  color: var(--ink);
+}
+.sd-card.shake {
+  animation: shk 0.45s;
+}
+.sd-card.hint {
+  animation: pulse 0.6s ease-in-out infinite;
+  box-shadow: 0 0 0 1cqh #ffd23f;
+}
+.sd-card.right {
+  background: #e4f7d6;
+  transform: scale(1.06);
+}
+@keyframes shk {
+  20% { transform: translateX(-1.4cqh); }
+  40% { transform: translateX(1.4cqh); }
+  60% { transform: translateX(-1cqh); }
+  80% { transform: translateX(1cqh); }
+}
+@keyframes pulse {
+  50% { transform: scale(1.06); }
+}
+
+/* ----- 박수 놀이 ----- */
+.cl-animal {
+  position: absolute;
+  left: 16cqh;
+  top: 20cqh;
+  width: 50cqh;
+  height: 46cqh;
+  display: grid;
+  place-items: center;
+}
+.cl-animal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: bob 2s ease-in-out infinite;
+}
+.cl-syllables {
+  position: absolute;
+  left: 8cqh;
+  top: 70cqh;
+  width: 66cqh;
+  display: flex;
+  gap: 2.4cqh;
+  justify-content: center;
+}
+.cl-syl {
+  width: 18cqh;
+  height: 20cqh;
+  display: grid;
+  place-items: center;
+  font-size: 12cqh;
+  color: #b8a98f;
+  background: #fff;
+  border: 0.6cqh solid var(--ink);
+  border-radius: 3cqh;
+  box-sizing: border-box;
+  transition: transform 0.15s;
+}
+.cl-syl.on {
+  color: #fff;
+  background: #ff7a59;
+  transform: scale(1.12);
+  -webkit-text-stroke: 0.4cqh var(--ink);
+  paint-order: stroke fill;
+}
+.cl-koko {
+  position: absolute;
+  left: 92cqh;
+  bottom: 4cqh;
+  height: 66cqh;
+  touch-action: manipulation;
+}
+.cl-koko img {
+  height: 100%;
+}
+.cl-koko.hit img {
+  animation: hit 0.28s ease-out;
+}
+@keyframes hit {
+  30% { transform: scale(1.12) rotate(-3deg); }
+}
+
+/* ----- 짝 맞추기 ----- */
+.mt-grid {
+  position: absolute;
+  left: 20cqh;
+  top: 13cqh;
+  width: 120cqh;
+  height: 84cqh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 3cqh;
+  perspective: 140cqh;
+}
+.mcard {
+  position: relative;
+}
+.mcard .inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.4s;
+}
+.mcard.up .inner {
+  transform: rotateY(180deg);
+}
+.mcard .face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: grid;
+  place-items: center;
+}
+.mcard .face img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.mcard .face.front .pic {
+  inset: auto;
+  left: 14%;
+  top: 8%;
+  width: 72%;
+  height: 62%;
+}
+.mcard .face.front .lbl {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  text-align: center;
+  font-size: 8cqh;
+  line-height: 1;
+  color: var(--ink);
+}
+.mcard .face.front {
+  transform: rotateY(180deg);
+}
+.mcard.match .face.front img:first-child {
+  filter: drop-shadow(0 0 1.2cqh #ffd23f);
+}
+
+/* ----- 이름표 붙이기 ----- */
+.tg-stands {
+  position: absolute;
+  inset: 0;
+}
+.tg-stand {
+  position: absolute;
+  top: 16cqh;
+  width: 44cqh;
+  height: 56cqh;
+}
+.tg-stand:nth-child(1) { left: 10cqh; }
+.tg-stand:nth-child(2) { left: 58cqh; }
+.tg-stand:nth-child(3) { left: 106cqh; }
+.tg-animal {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 28cqh;
+  transform: translateX(-50%);
+  animation: bob 2.2s ease-in-out infinite;
+}
+.tg-sign {
+  position: absolute;
+  left: 50%;
+  top: 25cqh;
+  width: 40cqh;
+  transform: translateX(-50%);
+}
+.tg-sign img {
+  width: 100%;
+  display: block;
+}
+.tg-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5.4cqh;
+  text-align: center;
+  font-size: 9cqh;
+  color: var(--ink);
+}
+.tg-stand.hint .tg-sign {
+  animation: pulse 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 1.4cqh #ffd23f);
+}
+.tg-stand.done .tg-animal {
+  animation: bob 0.6s ease-in-out infinite;
+}
+.tg-tray {
+  position: absolute;
+  left: 0;
+  top: 72cqh;
+  width: 100%;
+  height: 26cqh;
+}
+.tg-tag {
+  position: absolute;
+  left: calc(12cqh + var(--i) * 51cqh); /* 이름표를 떼도 나머지 자리가 움직이지 않게 */
+  top: 0;
+  width: 30cqh;
+  height: 25cqh;
+  touch-action: none;
+  cursor: grab;
+  transition: transform 0.25s;
+}
+.tg-tag img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.tg-tag.drag {
+  z-index: 8;
+  filter: drop-shadow(0 0.8cqh 0.8cqh rgba(0, 0, 0, 0.3));
+}
+.tg-tag.hint {
+  animation: pulse 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 1.4cqh #ffd23f);
+}
+.tg-text {
+  position: absolute;
+  inset: 26% 0 0 0; /* 이름표 몸통(고리 아래) 한가운데 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8.6cqh;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+/* 박수 놀이: 코코 머리 위 말풍선 */
+.cl-bubble {
+  position: absolute;
+  left: 80cqh;
+  top: 9cqh;
+  width: 62cqh;
+  padding: 2cqh 3cqh;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 5.4cqh;
+  line-height: 1.3;
+  color: var(--ink);
+  background: #fff;
+  border: 0.6cqh solid var(--ink);
+  border-radius: 4cqh;
+  box-shadow: 0 0.8cqh 0 rgba(58, 42, 28, 0.2);
+}
+.cl-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2.6cqh;
+  width: 3.4cqh;
+  height: 3.4cqh;
+  background: #fff;
+  border-right: 0.6cqh solid var(--ink);
+  border-bottom: 0.6cqh solid var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+.cl-bubble b {
+  color: var(--coral);
+  font-weight: 400;
+}
+
+/* ----- 글자 쓰기 ----- */
+.wr-animal {
+  position: absolute;
+  left: 8cqh;
+  top: 14cqh;
+  width: 62cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wr-animal .pic {
+  height: 48cqh;
+  max-width: 100%;
+  object-fit: contain;
+  animation: bob 2.4s ease-in-out infinite;
+}
+.wr-animal .lbl {
+  margin-top: 1cqh;
+  font-size: 13cqh;
+  line-height: 1;
+  color: var(--ink);
+  text-shadow: 0 0 1cqh #fff, 0 0 1cqh #fff, 0 0 1cqh #fff;
+}
+.wr-animal .let {
+  margin-top: 1cqh;
+  font-size: 7cqh;
+  padding: 0.6cqh 3cqh;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 4cqh;
+}
+.wr-board {
+  position: absolute;
+  left: 78cqh;
+  top: 12cqh;
+  width: 70cqh;
+  height: 70cqh;
+  background: #fff;
+  border: 0.8cqh solid var(--ink);
+  border-radius: 4cqh;
+  box-shadow: 0 1.2cqh 0 rgba(58, 42, 28, 0.25);
+  overflow: hidden;
+}
+.wr-guide,
+.wr-ink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.wr-ink {
+  touch-action: none;
+  cursor: crosshair;
+}
+.wr-guide.done {
+  filter: drop-shadow(0 0 2cqh #ffd23f);
+}
+.wr-erase {
+  position: absolute;
+  left: 1.6cqh;
+  bottom: 1.6cqh;
+  width: 10cqh;
+  height: 10cqh;
+  border-radius: 50%;
+  border: 0.5cqh solid var(--ink);
+  background: #fff;
+  font-size: 7cqh;
+  line-height: 1;
+  color: var(--ink);
+  font-family: var(--font);
+}
+
+/* ----- 빈칸 채우기 ----- */
+.bl-stage {
+  position: absolute;
+  left: 22cqh;
+  top: 14cqh;
+  width: 116cqh;
+  height: 46cqh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6cqh;
+  background: rgba(255, 255, 255, 0.9);
+  border: 0.8cqh solid #3b8fd6;
+  border-radius: 5cqh;
+  box-sizing: border-box;
+}
+.bl-pic {
+  height: 36cqh;
+  max-width: 34cqh;
+  object-fit: contain;
+}
+.bl-word {
+  display: flex;
+  align-items: center;
+  font-size: 18cqh;
+  line-height: 1;
+  color: var(--ink);
+}
+.bl-syl {
+  display: block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+}
+.bl-syl.hit {
+  color: var(--coral);
+}
+/* 빈칸이 있는 글자: 자음 자리(빈칸)를 모음 모양에 맞는 자리에 둔다 */
+.bl-cell {
+  position: relative;
+  width: 1em;
+  height: 1em;
+}
+.bl-cell > * {
+  position: absolute;
+  line-height: 1;
+  text-align: center;
+}
+.bl-box {
+  box-sizing: border-box;
+  border: 0.5cqh dashed #2a4bd7;
+  border-radius: 1.4cqh;
+  background: #e8ecff;
+}
+.bl-vow {
+  width: 0.5em;
+  height: 1em;
+  display: grid;
+  place-items: center;
+}
+/* 세로 모음(ㅏ ㅣ…): 빈칸은 왼쪽 위쪽, 모음은 오른쪽 */
+.bl-cell.v .bl-box { left: 0.08em; top: 0.2em; width: 0.46em; height: 0.6em; }
+.bl-cell.v .bl-vow { left: 0.44em; top: 0; }
+/* 세로 모음 + 받침(낙): 빈칸은 왼쪽 위, 모음은 오른쪽 위, 받침은 아래 (작게 쓴 글자는 자기 크기 기준 em) */
+.bl-cell.vf .bl-box { left: 0.1em; top: 0.1em; width: 0.42em; height: 0.36em; }
+.bl-cell.vf .bl-vow { left: 0.65em; top: -0.015em; font-size: 0.66em; width: 0.76em; height: 1em; }
+.bl-cell.vf .bl-fin { left: 0.26em; top: 0.59em; font-size: 0.66em; width: 1em; }
+/* 가로 모음(ㅗ ㅜ ㅡ): 빈칸은 위, 모음은 아래 */
+.bl-cell.h .bl-box { left: 0.1em; top: 0.08em; width: 0.8em; height: 0.46em; }
+.bl-cell.h .bl-vow { left: 0.14em; top: 0.19em; width: 0.72em; height: 0.5em; }
+.bl-cell.hf .bl-box { left: 0.1em; top: 0.04em; width: 0.8em; height: 0.34em; }
+.bl-cell.hf .bl-vow { left: 0.14em; top: 0.3em; width: 0.72em; height: 0.4em; font-size: 0.7em; }
+.bl-cell.hf .bl-fin { left: 0.17em; top: 0.62em; width: 0.66em; font-size: 0.66em; }
+.bl-choices {
+  position: absolute;
+  left: 23cqh;
+  top: 66cqh;
+  width: 114cqh;
+  display: flex;
+  justify-content: space-between;
+}
+.bl-choice {
+  width: 25cqh;
+  height: 25cqh;
+  display: grid;
+  place-items: center;
+  font-size: 15cqh;
+  color: var(--ink);
+  background: #fff8dc;
+  border: 0.8cqh solid #f2b32f;
+  border-radius: 4cqh;
+  box-shadow: 0 1.2cqh 0 #e39a12;
+  touch-action: none;
+  cursor: grab;
+  transition: transform 0.25s;
+}
+.bl-choice.drag {
+  z-index: 8;
+}
+.bl-choice.gone {
+  visibility: hidden;
+}
+.bl-choice.hint {
+  animation: pulse 0.6s ease-in-out infinite;
+  box-shadow: 0 0 0 1cqh #ffd23f;
+}
+.bl-choice.shake {
+  animation: shk 0.45s;
+}

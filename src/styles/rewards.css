@@ -1,0 +1,22 @@
+/* 보상 화면과 스티커북. 크기는 무대 높이 기준(cqh). */
+.glowbg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, rgba(255, 246, 216, 0.95), rgba(255, 246, 216, 0) 58%); pointer-events: none; }
+/* 보상 */
+.screen.reward { justify-content: center; gap: 2cqh; }
+.rw-koko { position: absolute; left: 50%; margin-left: -84cqh; bottom: 8cqh; height: 44cqh; animation: bob 1.4s ease-in-out infinite; }
+.rw-sticker { position: relative; width: 52cqh; height: 52cqh; animation: pop-in 0.7s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.rw-slot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.rw-animal { position: absolute; left: 50%; top: 50%; max-width: 66%; max-height: 66%; transform: translate(-50%, -50%); }
+.rw-text { margin: 0; position: relative; font-size: 5cqh; color: var(--ink); background: rgba(255, 255, 255, 0.85); border-radius: 4cqh; padding: 0.8cqh 3.4cqh; }
+.rw-text b { color: var(--coral); font-weight: 400; font-size: 6.4cqh; }
+.reward .rbtn { position: relative; width: 14cqh; height: 14cqh; }
+@keyframes pop-in { from { transform: scale(0) rotate(-20deg); } }
+/* 스티커북 */
+.screen.book { justify-content: center; }
+.slots { position: relative; display: grid; grid-template-columns: repeat(3, 40cqh); gap: 3cqh; background: rgba(255, 252, 244, 0.85); border: 0.5cqh solid var(--ink); border-radius: 4cqh; padding: 3cqh; }
+.slot { position: relative; height: 38cqh; border-radius: 3cqh; }
+.slot-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.slot-pic { position: absolute; left: 50%; top: 50%; max-width: 66%; max-height: 66%; transform: translate(-50%, -50%); }
+.slot.miss .slot-pic { filter: brightness(0); opacity: 0.13; }
+.slot-letter { position: absolute; right: 5cqh; bottom: 3cqh; font-size: 7cqh; color: var(--coral); text-shadow: 0.3cqh 0.3cqh 0 #fff, -0.3cqh 0.3cqh 0 #fff, 0.3cqh -0.3cqh 0 #fff, -0.3cqh -0.3cqh 0 #fff; }
+.bookclose { position: absolute; right: 3cqh; top: 3cqh; width: 12cqh; height: 12cqh; }
+@media (prefers-reduced-motion: reduce) { .rw-sticker { animation: none; } }

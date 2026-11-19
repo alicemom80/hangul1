@@ -1,0 +1,51 @@
+// 시작 화면: 사바나 배경 위에 자음 글자들이 떠다니고, 코코와 제목, ▶
+import { h, art, roundButton } from '@공통/widgets/dom.js';
+import { GREETING } from '../audio/script.js';
+
+/**
+ * 휴대폰·태블릿 브라우저: ▶를 누르면 주소창 없는 전체 화면 + 가로 고정.
+ * 아이폰처럼 지원하지 않거나, 컴퓨터(마우스)거나, 이미 홈 화면 앱으로 열었으면 그냥 넘어간다.
+ * 전체 화면은 누르는 순간에만 요청할 수 있어서 ▶에서 한다.
+ */
+function enterFullscreen() {
+  const page = document.documentElement;
+  if (!page.requestFullscreen || document.fullscreenElement) return;
+  if (!matchMedia('(pointer: coarse)').matches) return;
+  if (matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) return;
+  page
+    .requestFullscreen({ navigationUI: 'hide' })
+    .then(() => screen.orientation?.lock?.('landscape'))
+    .catch(() => {}); // 막혀도 앱은 그대로 쓸 수 있다
+}
+
+// 떠다니는 자음: [글자, 왼쪽 %, 위 %, 크기(cqh), 색, 흔들림 시작 지연(초)]
+const FLOATERS = [
+  ['ㄱ', 8, 14, 22, '#ff7a59', 0], ['ㄴ', 84, 12, 20, '#3fae5e', 0.4], ['ㄷ', 20, 52, 17, '#4fb3e8', 0.8],
+  ['ㅅ', 76, 50, 21, '#ffb21e', 1.2], ['ㅎ', 5, 76, 18, '#c46bd8', 1.6], ['ㅋ', 90, 76, 19, '#ff6f91', 2.0],
+  ['ㅅ', 36, 8, 14, '#3fae5e', 0.6], ['ㄱ', 66, 10, 15, '#4fb3e8', 1.0], ['ㅋ', 30, 70, 13, '#ffb21e', 1.4],
+  ['ㄴ', 66, 72, 14, '#ff7a59', 1.8],
+];
+
+export const startScreen = {
+  showBar: false,
+  background: 'savanna-base',
+  render(root, app) {
+    const start = () => {
+      enterFullscreen();
+      app.startSound();
+      app.go('menu');
+      app.say(GREETING);
+    };
+    // 링크를 열자마자는 브라우저가 막으므로, 시작 화면 어디든 처음 누르는 순간 전체 화면으로
+    root.addEventListener('pointerdown', enterFullscreen, { once: true });
+    root.append(
+      ...FLOATERS.map(([ch, x, y, size, color, delay]) =>
+        h('span', { class: 'floater', 'aria-hidden': 'true', style: `left:${x}%;top:${y}%;font-size:${size}cqh;color:${color};animation-delay:${delay}s` }, ch)),
+      art('character', 'koko-wave', { class: 'hero', alt: '코코' }),
+      h('h1', {}, '코끼리와 한글 친구들', h('small', {}, '(자음편)')),
+      roundButton('play', '시작', start),
+      h('div', { class: 'credit above', 'aria-hidden': 'true' }, h('i', { class: 'igicon' }), 'instagram ', h('b', {}, '@alicemom80')),
+      h('div', { class: 'copyright', 'aria-hidden': 'true' }, '© 2026 alicemom80. All rights reserved.'),
+    );
+  },
+};

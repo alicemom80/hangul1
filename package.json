@@ -1,0 +1,26 @@
+{
+  "name": "elephant-hangul-consonant-vol1",
+  "private": true,
+  "version": "0.1.0",
+  "description": "코끼리와 한글 친구들 (자음편 1권) — 만 3~4세 자음 소리 놀이 웹앱",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/voice-manifest.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/voice-manifest.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "voice:manifest": "node scripts/voice-manifest.mjs",
+    "voice:list": "node --import ./scripts/common-alias.mjs scripts/voice-list.mjs",
+    "voice:azure": "node --import ./scripts/common-alias.mjs scripts/azure-voice.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@fontsource/jua": "^5.3.0"
+  }
+}

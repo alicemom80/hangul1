@@ -3,17 +3,16 @@ import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { GREETING } from '../audio/script.js';
 
 /**
- * 휴대폰·태블릿 브라우저: ▶를 누르면 주소창 없는 전체 화면 + 가로 고정.
- * 아이폰처럼 지원하지 않거나, 컴퓨터(마우스)거나, 이미 홈 화면 앱으로 열었으면 그냥 넘어간다.
- * 전체 화면은 누르는 순간에만 요청할 수 있어서 ▶에서 한다.
+ * ▶를 누르면 주소창 없는 전체 화면 (+ 가로 고정을 지원하는 기기는 가로로).
+ * 아이폰처럼 지원하지 않거나 이미 홈 화면 앱으로 열었으면 그냥 넘어간다.
+ * 전체 화면은 누르는 순간에만 요청할 수 있어서 ▶에서 한다. 컴퓨터에서도 똑같이 전체 화면이 된다.
  */
 function enterFullscreen() {
   const page = document.documentElement;
-  if (!page.requestFullscreen || document.fullscreenElement) return;
-  if (!matchMedia('(pointer: coarse)').matches) return;
+  const request = page.requestFullscreen ?? page.webkitRequestFullscreen;
+  if (!request || document.fullscreenElement || document.webkitFullscreenElement) return;
   if (matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) return;
-  page
-    .requestFullscreen({ navigationUI: 'hide' })
+  Promise.resolve(request.call(page, { navigationUI: 'hide' }))
     .then(() => screen.orientation?.lock?.('landscape'))
     .catch(() => {}); // 막혀도 앱은 그대로 쓸 수 있다
 }

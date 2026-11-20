@@ -3,6 +3,7 @@ import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { ANIMALS, VOLUME } from '@권자료';
 import { GREETING } from '../audio/script.js';
 import { openInDefaultBrowser } from '../app/inapp.js';
+import { playIntro } from './intro.js';
 
 const MOVE_WAIT_MS = 1500; // 기본 브라우저가 열렸다면 이 안에 이 화면은 가려진다. 그대로면 열기가 막힌 것
 
@@ -64,5 +65,6 @@ export const startScreen = {
       h('div', { class: 'credit above', 'aria-hidden': 'true' }, h('i', { class: 'igicon' }), 'instagram ', h('b', {}, '@alicemom80')),
       h('div', { class: 'copyright', 'aria-hidden': 'true' }, '© 2026 alicemom80. All rights reserved.'),
     );
+    playIntro(root); // 처음 한 번은 오프닝 영상이 위에 덮였다가 끝나면 이 화면이 나타난다
   },
 };

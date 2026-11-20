@@ -72,6 +72,37 @@
 .start .hero {
   height: 40cqh;
 }
+/* 오프닝 영상: 시작 화면 위에 덮였다가 끝나면 서서히 사라지고, 제목과 ▶ 가 차례로 나타난다 */
+.start .intro {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: #58c2fb;
+  opacity: 1;
+  transition: opacity 0.9s ease;
+}
+.start .intro.gone {
+  opacity: 0;
+  pointer-events: none;
+}
+.start .intro-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.start.revealed h1 {
+  animation: reveal 0.8s ease-out 0.25s backwards;
+}
+.start.revealed .rbtn {
+  animation: reveal 0.8s ease-out 0.55s backwards;
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(2cqh) scale(0.92);
+  }
+}
 
 /* 메뉴: 나무 버튼 8개를 4칸 × 2줄로 (버튼 그림은 props/menu-*.webp) */
 .menu-grid {

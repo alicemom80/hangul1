@@ -1,7 +1,7 @@
 // 글자 쓰기(선 따라 그리기): 왼쪽에 글자에 해당하는 동물, 오른쪽에 큰 점선 자음. 초록 점에서 시작해 획 순서대로 따라 쓴다.
 // 너그럽게 판정한다(lineTrace.js): 벗어나면 멈추고 기다릴 뿐 틀림은 없다. 가만있으면 노란 점이 지금 획을 한 번 보여 준다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import { strokesOf } from '../data/strokes.js';
 import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';

@@ -1,19 +1,23 @@
 // 그림 목록: 이름 → 파일 위치. 그림을 바꿀 때는 public/images 안의 파일만 같은 이름으로 바꾸면 된다.
 
+import { ANIMALS, VOLUME } from '@권자료';
+
 const BASE = `${import.meta.env.BASE_URL}images/`;
 
-// 그려 둔 캐릭터 (webp): 코코 자세 6개 + 동물 친구 5마리 (코끼리 친구는 코코와 같은 그림)
+// 그려 둔 캐릭터 (webp): 이 권의 동물 친구들(권 자료의 ANIMALS, 파일 이름 = 동물 key) + 코코 자세 8개
 const CHARACTERS = [
-  'elephant', 'giraffe', 'camel', 'squirrel', 'lion', 'hippo',
+  ...ANIMALS.map((a) => a.key),
   'koko-idle', 'koko-hands', 'koko-ask', 'koko-cheer', 'koko-wave', 'koko-sleepy', 'koko-clap', 'koko-listen',
 ];
 const ICONS_SVG = ['play', 'check', 'home', 'close', 'lock', 'back'];
 const ICONS_WEBP = ['settings', 'speaker', 'star'];
 const BACKGROUNDS = [
   'savanna-base', 'night-base', // 시작·보상·스티커북 / 잠금 화면
-  'song-bg', 'menu-bg', 'puzzle-bg', 'sound-bg', 'clap-bg', 'match-bg', 'tag-bg',
+  VOLUME.songBg, // 노래 배경은 권마다 다르다 (song-bg, song-bg-2, song-bg-3)
+  'menu-bg', 'puzzle-bg', 'sound-bg', 'clap-bg', 'match-bg', 'tag-bg',
 ];
 const PROPS = ['card-back', 'card-front', 'tag', 'sign', 'slot', 'cloud', 'tree', 'bush', 'pond', 'acorn1', 'acorn2', 'note1', 'note2',
+  'flowers', 'fence', 'rock', 'iceberg', 'honeypot', 'trunk', // 2·3권 노래 장면 소품
   'menu-frame', 'menu-song', 'menu-puzzle', 'menu-sound', 'menu-clap', 'menu-match', 'menu-tag'];
 
 const KINDS = {

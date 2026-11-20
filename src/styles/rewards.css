@@ -14,6 +14,9 @@
 .screen.book { justify-content: center; }
 .slots { position: relative; display: grid; grid-template-columns: repeat(3, 40cqh); gap: 3cqh; background: rgba(255, 252, 244, 0.85); border: 0.5cqh solid var(--ink); border-radius: 4cqh; padding: 3cqh; }
 .slot { position: relative; height: 38cqh; border-radius: 3cqh; }
+/* 동물 7마리 이상(3권): 4칸 × 2줄로 조금 작게 */
+.slots.many { grid-template-columns: repeat(4, 32cqh); gap: 2.4cqh; }
+.slots.many .slot { height: 32cqh; }
 .slot-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .slot-pic { position: absolute; left: 50%; top: 50%; max-width: 66%; max-height: 66%; transform: translate(-50%, -50%); }
 .slot.miss .slot-pic { filter: brightness(0); opacity: 0.13; }

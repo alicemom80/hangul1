@@ -1,6 +1,6 @@
 // 짝 맞추기: 카드 6장(동물 3마리 × 2)을 뒤집어 같은 그림 짝을 찾는다. 틀려도 감점 없이 다시 뒤집힌다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';
 

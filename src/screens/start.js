@@ -1,5 +1,6 @@
 // 시작 화면: 사바나 배경 위에 자음 글자들이 떠다니고, 코코와 제목, ▶
 import { h, art, roundButton } from '@공통/widgets/dom.js';
+import { ANIMALS, VOLUME } from '@권자료';
 import { GREETING } from '../audio/script.js';
 import { openInDefaultBrowser } from '../app/inapp.js';
 
@@ -20,13 +21,17 @@ function enterFullscreen() {
     .catch(() => {}); // 막혀도 앱은 그대로 쓸 수 있다
 }
 
-// 떠다니는 자음: [글자, 왼쪽 %, 위 %, 크기(cqh), 색, 흔들림 시작 지연(초)]
-const FLOATERS = [
-  ['ㄱ', 8, 14, 22, '#ff7a59', 0], ['ㄴ', 84, 12, 20, '#3fae5e', 0.4], ['ㄷ', 20, 52, 17, '#4fb3e8', 0.8],
-  ['ㅅ', 76, 50, 21, '#ffb21e', 1.2], ['ㅎ', 5, 76, 18, '#c46bd8', 1.6], ['ㅋ', 90, 76, 19, '#ff6f91', 2.0],
-  ['ㅅ', 36, 8, 14, '#3fae5e', 0.6], ['ㄱ', 66, 10, 15, '#4fb3e8', 1.0], ['ㅋ', 30, 70, 13, '#ffb21e', 1.4],
-  ['ㄴ', 66, 72, 14, '#ff7a59', 1.8],
+// 떠다니는 자음: [몇 번째 동물의 자음, 왼쪽 %, 위 %, 크기(cqh), 색, 흔들림 시작 지연(초)]. 글자는 그 권의 동물 자음.
+const FLOAT_SPOTS = [
+  [0, 8, 14, 22, '#ff7a59', 0], [1, 84, 12, 20, '#3fae5e', 0.4], [2, 20, 52, 17, '#4fb3e8', 0.8],
+  [3, 76, 50, 21, '#ffb21e', 1.2], [4, 5, 76, 18, '#c46bd8', 1.6], [5, 90, 76, 19, '#ff6f91', 2.0],
+  [3, 36, 8, 14, '#3fae5e', 0.6], [0, 66, 10, 15, '#4fb3e8', 1.0], [5, 30, 70, 13, '#ffb21e', 1.4],
+  [1, 66, 72, 14, '#ff7a59', 1.8],
 ];
+// 동물이 7마리인 권은 마지막 자음도 하나 띄운다
+const FLOATERS = FLOAT_SPOTS.map(([n, ...rest], i) => [
+  ANIMALS[(i === 7 && ANIMALS.length > 6 ? 6 : n) % ANIMALS.length].letter, ...rest,
+]);
 
 export const startScreen = {
   showBar: false,
@@ -54,7 +59,7 @@ export const startScreen = {
       ...FLOATERS.map(([ch, x, y, size, color, delay]) =>
         h('span', { class: 'floater', 'aria-hidden': 'true', style: `left:${x}%;top:${y}%;font-size:${size}cqh;color:${color};animation-delay:${delay}s` }, ch)),
       art('character', 'koko-wave', { class: 'hero', alt: '코코' }),
-      h('h1', {}, '코끼리와 한글 친구들', h('small', {}, '(자음편)')),
+      h('h1', {}, VOLUME.title, h('small', {}, VOLUME.subtitle)),
       roundButton('play', '시작', start),
       h('div', { class: 'credit above', 'aria-hidden': 'true' }, h('i', { class: 'igicon' }), 'instagram ', h('b', {}, '@alicemom80')),
       h('div', { class: 'copyright', 'aria-hidden': 'true' }, '© 2026 alicemom80. All rights reserved.'),

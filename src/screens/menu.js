@@ -1,6 +1,6 @@
 // 놀이 고르기: 나무 버튼 8개를 4칸 × 2줄로 놓는다. 버튼 그림은 props/menu-*.webp (글자 쓰기·빈칸 채우기는 빈 틀 위에 그림을 얹는다).
 import { h, art } from '@공통/widgets/dom.js';
-import { ACTIVITIES } from '../data/zoo1.js';
+import { ACTIVITIES } from '@권자료';
 import { MENU_ASK } from '../audio/script.js';
 
 const IMAGE = { w: 1536, h: 1024 };

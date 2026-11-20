@@ -37,8 +37,11 @@ jobs:
         working-directory: app
       - run: npm test
         working-directory: app
+      # 몇 권을 만들지: 저장소 Settings → Secrets and variables → Actions → Variables 의 VOLUME (2 또는 3). 없으면 1권.
       - run: npm run build
         working-directory: app
+        env:
+          VOLUME: ${{ vars.VOLUME || '1' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: app/dist

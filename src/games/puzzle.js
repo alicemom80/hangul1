@@ -1,6 +1,6 @@
 // 그림 퍼즐: 동물 그림을 대각선 4조각으로 나눠 끌어서 제자리에. 틀려도 감점 없이 힌트만.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 

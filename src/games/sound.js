@@ -1,6 +1,6 @@
 // 소리 맞히기: 동물 이름의 첫 글자 소리를 듣고, 그 소리로 시작하는 동물 그림을 고른다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';
 

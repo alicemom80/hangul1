@@ -1,6 +1,8 @@
 // 진행 기록 저장소: 브라우저 저장소(localStorage)에만 저장한다. 서버로 보내지 않는다.
 
-export const STORAGE_KEY = 'hangul-consonant-vol1';
+import { VOLUME } from '@권자료';
+
+export const STORAGE_KEY = VOLUME.storageKey; // 권마다 다른 키 (1권은 'hangul-consonant-vol1')
 
 /** 안쪽 목록까지 얼려서(바꿀 수 없게) 돌려준다. */
 export const freezeProgress = (p) =>

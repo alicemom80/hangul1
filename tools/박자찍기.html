@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>노래 박자 찍기</title>
+<style>
+  :root { --ink: #2b3550; --pink: #ff4f87; --bg: #f4f7ff; --card: #fff; --line: #d7def0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Malgun Gothic", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+  main { max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; color: #5b6685; font-size: 14px; line-height: 1.5; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  label { font-size: 14px; }
+  input[type=number] { width: 70px; padding: 6px; font-size: 15px; }
+  textarea { width: 100%; height: 110px; font: inherit; font-size: 14px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
+  button { font: inherit; font-size: 15px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+  button.main { background: var(--pink); color: #fff; border-color: var(--pink); font-size: 20px; padding: 18px 10px; width: 100%; }
+  button.main:active { transform: translateY(2px); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .time { font-variant-numeric: tabular-nums; font-size: 26px; font-weight: bold; }
+  .next { font-size: 18px; margin: 10px 0; min-height: 28px; }
+  .next b { color: var(--pink); }
+  ol { margin: 0; padding-left: 28px; max-height: 220px; overflow: auto; font-variant-numeric: tabular-nums; font-size: 14px; }
+  li { padding: 2px 0; cursor: pointer; }
+  li:hover { background: #eef2ff; }
+  pre { background: #1e2740; color: #e8edff; padding: 12px; border-radius: 10px; overflow: auto; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+  .hint { font-size: 13px; color: #5b6685; }
+  audio { width: 100%; }
+</style>
+</head>
+<body>
+<main>
+  <h1>노래 박자 찍기</h1>
+  <p class="sub">노래를 들으면서 <b>가사 한 줄이 시작될 때마다</b> 큰 분홍 버튼(또는 <b>스페이스 키</b>)을 눌러요. 끝나면 아래 코드를 복사해 <code>src/data/zoo2.js</code>(또는 <code>zoo3.js</code>)의 <code>LINE_STARTS</code>와 <code>LYRIC_END</code>에 붙여 넣으면 돼요.</p>
+
+  <section>
+    <h2>1. 노래 고르기</h2>
+    <div class="row">
+      <input id="file" type="file" accept="audio/*" />
+      <label>가사 줄 수 <input id="count" type="number" min="1" max="60" value="24" /> <span class="hint">(2권 24줄, 3권 28줄)</span></label>
+    </div>
+    <audio id="player" controls></audio>
+    <div class="row" style="margin-top:8px">
+      <label>재생 속도
+        <select id="rate"><option value="1">보통</option><option value="0.85">조금 느리게</option><option value="0.7">많이 느리게</option></select>
+      </label>
+      <button id="back3" type="button">3초 뒤로</button>
+      <button id="restart" type="button">처음부터 다시 찍기</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. 가사 붙여 넣기 (선택)</h2>
+    <textarea id="lyrics" placeholder="한 줄에 가사 한 줄씩 (예: 미음 미어캣 미어 미어 미어캣). 넣어 두면 '다음 줄'을 보여 줘요."></textarea>
+  </section>
+
+  <section>
+    <h2>3. 찍기</h2>
+    <div class="row"><span class="time" id="clock">0.00</span><span id="progress">0 / 24 줄</span></div>
+    <div class="next" id="next">노래를 고른 뒤 재생하세요.</div>
+    <button class="main" id="tap" type="button">▶ 이 줄이 시작돼요! (스페이스)</button>
+    <div class="row" style="margin-top:10px">
+      <button id="undo" type="button">방금 찍은 것 지우기 (백스페이스)</button>
+      <button id="endTap" type="button">마지막 줄이 끝났어요 (E 키)</button>
+    </div>
+    <p class="hint">줄 수를 다 찍은 뒤, 마지막 가사가 끝나는 순간 "마지막 줄이 끝났어요"를 눌러요. 찍은 시각을 누르면 그 시각으로 이동해서 다시 들어볼 수 있어요.</p>
+    <ol id="list"></ol>
+  </section>
+
+  <section>
+    <h2>4. 결과 (복사해서 붙여 넣기)</h2>
+    <pre id="out">아직 찍은 것이 없어요.</pre>
+    <button id="copy" type="button">복사하기</button> <span class="hint" id="copied"></span>
+  </section>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const player = $('player');
+  const taps = [];
+  let endTime = null;
+
+  const lineCount = () => Math.max(1, parseInt($('count').value, 10) || 24);
+  const lyricLines = () => $('lyrics').value.split('\n').map((s) => s.trim()).filter(Boolean);
+  const fmt = (t) => t.toFixed(2);
+
+  function render() {
+    const n = lineCount();
+    $('progress').textContent = `${taps.length} / ${n} 줄`;
+    const lyrics = lyricLines();
+    const next = $('next');
+    next.textContent = '';
+    if (taps.length < n) {
+      next.append(`다음 ${taps.length + 1}번째 줄`);
+      if (lyrics[taps.length]) {
+        const b = document.createElement('b');
+        b.textContent = lyrics[taps.length];
+        next.append(': ', b);
+      }
+    } else {
+      next.textContent = endTime === null
+        ? '마지막 가사가 끝나는 순간 "마지막 줄이 끝났어요"를 누르세요.'
+        : '모두 찍었어요! 아래 결과를 복사하세요.';
+    }
+    $('list').replaceChildren(...taps.map((t, i) => {
+      const li = document.createElement('li');
+      li.textContent = `${i + 1}번째 줄  ${fmt(t)}초${lyrics[i] ? `  ${lyrics[i]}` : ''}`;
+      li.addEventListener('click', () => { player.currentTime = Math.max(0, t - 0.3); player.play(); });
+      return li;
+    }));
+    $('list').scrollTop = $('list').scrollHeight;
+    if (!taps.length) { $('out').textContent = '아직 찍은 것이 없어요.'; return; }
+    const rows = [];
+    for (let i = 0; i < taps.length; i += 12) rows.push(`  ${taps.slice(i, i + 12).map(fmt).join(', ')},`);
+    const complete = taps.length === n;
+    $('out').textContent =
+      `// ${complete ? '' : `(아직 ${taps.length}/${n}줄만 찍었어요) `}붙여 넣을 곳: src/data/zoo<권>.js\n` +
+      `export const LINE_STARTS = Object.freeze([\n${rows.join('\n')}\n]);\n` +
+      `export const LYRIC_END = ${endTime === null ? '0; // 마지막 줄이 끝나는 시각을 아직 안 찍었어요' : `${fmt(endTime)};`}`;
+  }
+
+  function tap() {
+    if (taps.length >= lineCount()) return;
+    taps.push(player.currentTime);
+    render();
+  }
+
+  $('file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    player.src = URL.createObjectURL(file);
+    $('next').textContent = '재생 버튼을 누르고 시작하세요.';
+  });
+  $('rate').addEventListener('change', () => { player.playbackRate = parseFloat($('rate').value); });
+  player.addEventListener('play', () => { player.playbackRate = parseFloat($('rate').value); });
+  $('count').addEventListener('input', render);
+  $('lyrics').addEventListener('input', render);
+  $('tap').addEventListener('pointerdown', (e) => { e.preventDefault(); tap(); });
+  $('undo').addEventListener('click', () => { if (endTime !== null) endTime = null; else taps.pop(); render(); });
+  $('endTap').addEventListener('click', () => { endTime = player.currentTime; render(); });
+  $('back3').addEventListener('click', () => { player.currentTime = Math.max(0, player.currentTime - 3); });
+  $('restart').addEventListener('click', () => { taps.length = 0; endTime = null; player.currentTime = 0; render(); });
+  $('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('out').textContent); $('copied').textContent = '복사했어요!'; }
+    catch { $('copied').textContent = '복사가 막혔어요. 위 글자를 직접 드래그해서 복사하세요.'; }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (['TEXTAREA', 'INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+    if (e.code === 'Space') { e.preventDefault(); tap(); }
+    else if (e.code === 'Backspace') { e.preventDefault(); $('undo').click(); }
+    else if (e.code === 'KeyE') $('endTap').click();
+  });
+  setInterval(() => { $('clock').textContent = fmt(player.currentTime || 0); }, 50);
+  render();
+})();
+</script>
+</body>
+</html>

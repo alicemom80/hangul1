@@ -12,8 +12,17 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "dev:2": "node scripts/with-volume.mjs 2 npm run dev",
+    "dev:3": "node scripts/with-volume.mjs 3 npm run dev",
+    "build:2": "node scripts/with-volume.mjs 2 npm run build",
+    "build:3": "node scripts/with-volume.mjs 3 npm run build",
+    "check:1": "node scripts/check-volume.mjs 1",
+    "check:2": "node scripts/check-volume.mjs 2",
+    "check:3": "node scripts/check-volume.mjs 3",
     "voice:manifest": "node scripts/voice-manifest.mjs",
     "voice:list": "node --import ./scripts/common-alias.mjs scripts/voice-list.mjs",
+    "voice:list:2": "node scripts/with-volume.mjs 2 npm run voice:list",
+    "voice:list:3": "node scripts/with-volume.mjs 3 npm run voice:list",
     "voice:azure": "node --import ./scripts/common-alias.mjs scripts/azure-voice.mjs"
   },
   "devDependencies": {

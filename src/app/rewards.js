@@ -2,7 +2,7 @@
 // 아직 못 모은 동물부터 주고, 6마리를 다 모으면 아무 동물이나 "또" 준다.
 import { freezeProgress } from '../storage/progress.js';
 import { pickOne } from '@공통/games/logic.js';
-import { ANIMALS, ACTIVITY_KEYS } from '../data/zoo1.js';
+import { ANIMALS, ACTIVITY_KEYS } from '@권자료';
 
 /**
  * @returns { progress, sticker: {key,name}, isNew }

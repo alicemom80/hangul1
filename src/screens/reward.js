@@ -2,7 +2,7 @@
 import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { stickerLine } from '../audio/script.js';
 import { stopVoice } from '../audio/voice.js';
-import { animalOf } from '../data/zoo1.js';
+import { animalOf } from '@권자료';
 
 export const rewardScreen = {
   showBar: false,

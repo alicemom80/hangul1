@@ -12,8 +12,8 @@
 1. 음성 녹음: `npm run voice:list`(목록 `docs/음성 목록.md`, 98문장) → AZURE_SPEECH_KEY/REGION을 넣고 `npm run voice:azure`.
 2. 앱 아이콘(`public/icons`)은 아직 숫자 앱 것. 코코 그림으로 교체.
 3. 위쪽 막대·스티커북 버튼 위치, 보상 화면 문구 등 실제 기기에서 보고 다듬기.
-4. 2권·3권: `src/data/zoo1.js`와 같은 모양의 자료 파일 + 새 동물 그림. 모음은 다음 단계 앱.
-5. 배포: GitHub 저장소를 새로 만들고 `.github/workflows/deploy.yml` 사용(공통 코드는 `alicemom80/elephant-common`).
+4. 2권·3권: 코드·자료 틀·가사 초안은 준비됨(`src/data/zoo2.js`, `zoo3.js`, 권은 `VOLUME` 환경변수로 선택). **동물 그림·노래·노래 배경만 넣으면 됨** → 넣을 곳과 순서는 `docs/2-3권-준비.md`. 점검 `npm run check:2`, 미리보기 `npm run dev:2`, 박자 찍기 `tools/박자찍기.html`. 모음은 다음 단계 앱.
+5. 배포: 1권은 `alicemom80/hangul1`(공개)에 올라가 있음. 2·3권은 새 저장소를 만들고 같은 코드를 올린 뒤 저장소 변수 `VOLUME`=2(3)을 넣으면 됨(`.github/workflows/deploy.yml`, 공통 코드는 `alicemom80/elephant-common`).
 
 ## 주의
 - 그림 원본: 메뉴·노래 배경·코코는 GPT 생성, 놀이 배경은 ComfyUI. 상업 공개 전 약관 확인.

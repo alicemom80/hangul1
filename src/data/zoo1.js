@@ -1,31 +1,35 @@
 // 1권 자료: 동물원 친구 6마리와 자음, 노래 가사. 화면과 상관없는 순수한 자료.
-// 2권·3권은 같은 모양으로 data/zoo2.js, zoo3.js 를 더하면 된다.
+// 2권·3권은 같은 모양으로 data/zoo2.js, zoo3.js 에 있다. 앱은 권 번호(VOLUME 환경변수)에 맞는 파일 하나만 쓴다.
+import { makeAnimals, makeLines, ACTIVITIES, ACTIVITY_KEYS, initialOf } from './zooCommon.js';
+
+export { ACTIVITIES, ACTIVITY_KEYS, initialOf };
+
+/** 이 권의 이름표 (제목·저장 키·노래 파일·노래 배경) */
+export const VOLUME = Object.freeze({
+  id: 1,
+  title: '코끼리와 한글 친구들',
+  subtitle: '(자음편)',
+  shortName: '한글 친구들 자음편',
+  description: '만 3~4세 아이가 동물 친구들과 자음 소리를 익히는 놀이 (1권)',
+  storageKey: 'hangul-consonant-vol1',
+  songFile: 'song.mp3',
+  songBg: 'song-bg',
+});
 
 /** letter: 자음, letterName: 자음 이름, first: 이름의 첫 글자(소리 맞히기에서 들려줌) */
-export const ANIMALS = Object.freeze([
+export const ANIMALS = makeAnimals([
   { key: 'giraffe', name: '기린', letter: 'ㄱ', letterName: '기역' },
   { key: 'camel', name: '낙타', letter: 'ㄴ', letterName: '니은' },
   { key: 'squirrel', name: '다람쥐', letter: 'ㄷ', letterName: '디귿' },
   { key: 'lion', name: '사자', letter: 'ㅅ', letterName: '시옷' },
   { key: 'hippo', name: '하마', letter: 'ㅎ', letterName: '히읗' },
   { key: 'elephant', name: '코끼리', letter: 'ㅋ', letterName: '키읔' },
-].map((a) => Object.freeze({ ...a, first: a.name[0], syllables: Object.freeze([...a.name]) })));
+]);
 
 export const animalOf = (key) => ANIMALS.find((a) => a.key === key);
 
-/** 놀이 8가지 (메뉴 첫 쪽 6개: 위 줄 왼쪽→오른쪽, 아래 줄 왼쪽→오른쪽 / 둘째 쪽 2개) */
+/** 메뉴 첫 쪽 크기 (지금 메뉴는 한 쪽에 8개라 쓰이지 않는다) */
 export const MENU_PAGE_SIZE = 6;
-export const ACTIVITIES = Object.freeze([
-  { key: 'song', name: '노래방' },
-  { key: 'puzzle', name: '그림 퍼즐' },
-  { key: 'sound', name: '소리 맞히기' },
-  { key: 'clap', name: '박수 놀이' },
-  { key: 'match', name: '짝 맞추기' },
-  { key: 'tag', name: '이름표 붙이기' },
-  { key: 'write', name: '글자 쓰기' }, // 메뉴 둘째 쪽
-  { key: 'blank', name: '빈칸 채우기' },
-]);
-export const ACTIVITY_KEYS = Object.freeze(ACTIVITIES.map((a) => a.key));
 
 /**
  * 노래 가사: 동물 6마리 × 4줄. t는 첫소리를 강조할 글자의 초성 번호(유니코드 초성 순서).
@@ -47,11 +51,20 @@ export const LINE_STARTS = Object.freeze([
 ]);
 export const LYRIC_END = 69.1; // 마지막 가사가 끝나는 시각
 
-/** 한글 글자의 초성 번호 (한글이 아니면 -1) */
-export function initialOf(ch) {
-  const c = ch.charCodeAt(0) - 0xac00;
-  return c >= 0 && c < 11172 ? Math.floor(c / 588) : -1;
-}
+/**
+ * 노래 화면의 장면(절마다 하나).
+ *  animal: 장면의 동물(그림 이름. 없으면 null), before: 동물 뒤에 깔리는 소품, props: 동물 앞에 놓이는 소품.
+ *  소품은 [css 클래스, 소품 그림 이름]. 소품의 자리는 styles/song.css 의 클래스가 정한다. 동물만 두어도 된다.
+ */
+export const SCENES = Object.freeze([
+  { animal: 'giraffe', props: [['pr tree1', 'tree'], ['nt n1', 'note1'], ['nt n2', 'note2']] },
+  { animal: 'camel', props: [['nt n3', 'note1'], ['nt n4', 'note2']] },
+  { animal: 'squirrel', before: [['pr tree1', 'tree']], props: [['pr ac1', 'acorn1'], ['pr ac2', 'acorn2'], ['nt n1', 'note1']] },
+  { animal: 'lion', props: [['pr bush1', 'bush'], ['pr bush2', 'bush'], ['nt n3', 'note2']] },
+  { animal: 'hippo', before: [['pr pond', 'pond']], props: [['nt n2', 'note1'], ['nt n4', 'note2']] },
+  { animal: null, props: [['nt n1', 'note1'], ['nt n3', 'note2'], ['nt n4', 'note1']] }, // 코코가 주인공인 마지막 절
+]);
+/** 코코가 가운데 크게 나오는 절 번호 (없으면 -1). 1권은 마지막 절이 코끼리(코코) */
+export const KOKO_VERSE = 5;
 
-/** 가사 전체를 줄 단위로 펼친다: [{ words, verse }] */
-export const LINES = Object.freeze(VERSES.flatMap((v, vi) => v.lines.map((words) => Object.freeze({ words, verse: vi }))));
+export const LINES = makeLines(VERSES);

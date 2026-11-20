@@ -2,6 +2,7 @@
 // docs/음성 목록.md : 파일 이름 ↔ 문장 목록. 녹음은 npm run voice:azure 로 만든다.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { VOICE_LINES } from '../src/audio/voiceLines.js';
+import { volumeId } from './volume.mjs';
 
 const groups = [...new Set(VOICE_LINES.map((l) => l.group))];
 const linesOf = (g) => VOICE_LINES.filter((l) => l.group === g);
@@ -20,5 +21,7 @@ for (const g of groups) {
   linesOf(g).forEach((l) => out.push(`| ${l.id}.mp3 | ${cell(l.text)} |`));
 }
 mkdirSync(new URL('../docs/', import.meta.url), { recursive: true });
-writeFileSync(new URL('../docs/음성 목록.md', import.meta.url), `${out.join('\n')}\n`);
+// 1권은 '음성 목록.md', 2·3권은 '음성 목록-2권.md' 처럼 따로 만든다 (VOLUME 환경변수)
+const suffix = volumeId() === '1' ? '' : `-${volumeId()}권`;
+writeFileSync(new URL(`../docs/음성 목록${suffix}.md`, import.meta.url), `${out.join('\n')}\n`);
 console.log(`[voice] 음성 목록을 만들었어요 (${VOICE_LINES.length}문장).`);

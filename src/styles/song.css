@@ -3,7 +3,8 @@
 .song .scene { position: absolute; inset: 0; opacity: 0; transition: opacity 0.45s; }
 .song .scene.on { opacity: 1; }
 .song .scene img { position: absolute; display: block; pointer-events: none; }
-.song .ch { bottom: calc(var(--u) * 18); transform-origin: 50% 100%; animation: chb 0.65s ease-in-out infinite alternate; }
+/* 동물 기본 크기·자리 (2·3권 동물은 이것으로 나온다). 더 맞추고 싶으면 아래처럼 동물 이름(key)으로 줄을 더한다. */
+.song .ch { height: calc(var(--u) * 28); left: calc(var(--u) * 47); bottom: calc(var(--u) * 18); transform-origin: 50% 100%; animation: chb 0.65s ease-in-out infinite alternate; }
 @keyframes chb {
   from { transform: translateY(0) rotate(-1.4deg); }
   to { transform: translateY(calc(var(--u) * -0.9)) rotate(1.4deg); }
@@ -20,6 +21,14 @@
 .song .bush1 { height: calc(var(--u) * 10); left: calc(var(--u) * 44); bottom: calc(var(--u) * 17.4); z-index: 2; }
 .song .bush2 { height: calc(var(--u) * 10); left: calc(var(--u) * 57); bottom: calc(var(--u) * 17.4); z-index: 2; }
 .song .pond { height: calc(var(--u) * 13); left: calc(var(--u) * 44); bottom: calc(var(--u) * 16.6); }
+/* 2·3권 장면 소품 (동물은 기본 자리 left 47 ~ 70 에 서므로 소품은 그 오른쪽·왼쪽에 놓는다) */
+.song .fl1 { height: calc(var(--u) * 8); left: calc(var(--u) * 72); bottom: calc(var(--u) * 20.4); }
+.song .fl2 { height: calc(var(--u) * 7); left: calc(var(--u) * 36); bottom: calc(var(--u) * 20.4); }
+.song .fe1 { height: calc(var(--u) * 10); left: calc(var(--u) * 73); bottom: calc(var(--u) * 20.4); }
+.song .rk1 { height: calc(var(--u) * 9); left: calc(var(--u) * 69); bottom: calc(var(--u) * 20.4); }
+.song .hp1 { height: calc(var(--u) * 9); left: calc(var(--u) * 72); bottom: calc(var(--u) * 20.4); }
+.song .ib1 { height: calc(var(--u) * 11); left: calc(var(--u) * 69); bottom: calc(var(--u) * 20.4); }
+.song .tk1 { height: calc(var(--u) * 24); left: calc(var(--u) * 73); bottom: calc(var(--u) * 20.4); }
 .song .nt { height: calc(var(--u) * 5); animation: note 1.3s ease-in-out infinite alternate; }
 .song .n1 { left: calc(var(--u) * 42); top: calc(var(--u) * 14); }
 .song .n2 { left: calc(var(--u) * 78); top: calc(var(--u) * 20); }

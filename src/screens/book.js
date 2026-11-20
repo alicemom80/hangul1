@@ -1,6 +1,6 @@
 // 스티커북: 동물 6칸. 모은 동물은 그림으로, 아직 못 만난 동물은 그림자로 보인다. 누르면 이름을 말해 준다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import { bookCount, NOT_MET } from '../audio/script.js';
 import { stopVoice } from '../audio/voice.js';
 
@@ -25,7 +25,7 @@ export const bookScreen = {
     });
     root.append(
       h('div', { class: 'glowbg', 'aria-hidden': 'true' }),
-      h('div', { class: 'slots' }, ...slots),
+      h('div', { class: `slots${ANIMALS.length > 6 ? ' many' : ''}` }, ...slots), // 7마리 이상이면 한 줄에 4칸
       h('button', { class: 'bookclose press', 'aria-label': '닫기', onclick: () => { app.sfx.pop(); app.go(back.name, back.params); } },
         art('icon', 'close', { class: 'ico' })),
     );

@@ -1,30 +1,27 @@
 // 노래방: 노래가 나오며 가사가 박자에 맞춰 분홍색으로 차오른다. 글자를 누르면 그 구간만 다시 들려준다.
 // 노래가 끝나면 스티커 한 장. 박자(LINE_STARTS)는 사용자가 직접 찍어 확정한 값이다.
 import { h, art } from '@공통/widgets/dom.js';
-import { VERSES, LINES, LINE_STARTS, LYRIC_END, initialOf } from '../data/zoo1.js';
+import { VERSES, LINES, LINE_STARTS, LYRIC_END, SCENES, KOKO_VERSE, VOLUME, initialOf } from '@권자료';
+import { hasTiming, estimateTiming } from '../data/zooCommon.js';
 import { SONG_END } from '../audio/script.js';
 import { stopVoice } from '../audio/voice.js';
 import { artUrl } from '../art/registry.js';
 
-const SONG_URL = `${import.meta.env.BASE_URL}audio/song.mp3`;
+const SONG_URL = `${import.meta.env.BASE_URL}audio/${VOLUME.songFile}`;
 const MAX_LINE_SEC = 4.6;
 const LAST_VERSE = VERSES.length - 1;
+const GUESS_DURATION_SEC = 70; // 노래 길이를 알기 전에 쓰는 임시 값 (박자를 안 찍은 권)
 
-/** 장면(동물 + 소품) 6개: 노래 절마다 하나씩 */
-const scene = (...items) => h('div', { class: 'scene' }, ...items);
+/** 장면(동물 + 소품): 노래 절마다 하나씩. 내용은 권 자료의 SCENES */
 const prop = (cls, name, kind = 'prop') => art(kind, name, { class: cls });
-const buildScenes = () => [
-  scene(prop('ch giraffe', 'giraffe', 'character'), prop('pr tree1', 'tree'), prop('nt n1', 'note1'), prop('nt n2', 'note2')),
-  scene(prop('ch camel', 'camel', 'character'), prop('nt n3', 'note1'), prop('nt n4', 'note2')),
-  scene(prop('pr tree1', 'tree'), prop('ch squirrel', 'squirrel', 'character'), prop('pr ac1', 'acorn1'), prop('pr ac2', 'acorn2'), prop('nt n1', 'note1')),
-  scene(prop('ch lion', 'lion', 'character'), prop('pr bush1', 'bush'), prop('pr bush2', 'bush'), prop('nt n3', 'note2')),
-  scene(prop('pr pond', 'pond'), prop('ch hippo', 'hippo', 'character'), prop('nt n2', 'note1'), prop('nt n4', 'note2')),
-  scene(prop('nt n1', 'note1'), prop('nt n3', 'note2'), prop('nt n4', 'note1')),
-];
+const buildScenes = () => SCENES.map((s) => h('div', { class: 'scene' },
+  ...(s.before ?? []).map(([cls, name]) => prop(cls, name)),
+  ...(s.animal ? [prop(`ch ${s.animal}`, s.animal, 'character')] : []),
+  ...s.props.map(([cls, name]) => prop(cls, name))));
 
 export const songScreen = {
   showBar: false,
-  background: 'song-bg',
+  background: VOLUME.songBg,
 
   render(root, app) {
     const au = new Audio(SONG_URL);
@@ -49,13 +46,22 @@ export const songScreen = {
       h('div', { class: 'scenes' }, ...scenes), koko, big, vb, h('div', { class: 'lyric' }, cur, nxt), pp, home);
     root.append(field);
 
+    // 박자: 찍어 둔 값이 있으면 그것을, 없으면(2·3권 초안) 노래 길이에 맞춰 대략 나눈 값을 쓴다
+    const measured = hasTiming(LINE_STARTS, LINES.length);
+    let timing = measured ? { starts: LINE_STARTS, end: LYRIC_END } : estimateTiming(LINES.length, GUESS_DURATION_SEC);
+    if (!measured) {
+      au.addEventListener('loadedmetadata', () => {
+        if (Number.isFinite(au.duration)) timing = estimateTiming(LINES.length, au.duration);
+      });
+    }
+
     const play = () => au.play().catch(() => {});
     const lineRange = (i) => {
-      const s = LINE_STARTS[i];
-      const next = i + 1 < LINE_STARTS.length ? LINE_STARTS[i + 1] : LYRIC_END;
+      const s = timing.starts[i];
+      const next = i + 1 < timing.starts.length ? timing.starts[i + 1] : timing.end;
       return [s, Math.min(s + MAX_LINE_SEC, Math.max(s + 1, next - 0.25))];
     };
-    const findLine = (t) => LINE_STARTS.reduce((r, s, i) => (s <= t ? i : r), -1);
+    const findLine = (t) => timing.starts.reduce((r, s, i) => (s <= t ? i : r), -1);
 
     function playPiece(a, b) {
       au.currentTime = a;
@@ -102,9 +108,8 @@ export const songScreen = {
       [...vb.children].forEach((b, k) => b.classList.toggle('on', k === v));
       scenes.forEach((sc, k) => sc.classList.toggle('on', k === v));
       big.textContent = VERSES[v].L;
-      const hero = v === LAST_VERSE;
-      koko.classList.toggle('hero', hero);
-      koko.src = artUrl('character', hero ? 'koko-cheer' : 'koko-idle');
+      koko.classList.toggle('hero', v === KOKO_VERSE); // 코코가 주인공인 절(1권 마지막)은 가운데 크게
+      koko.src = artUrl('character', v === LAST_VERSE ? 'koko-cheer' : 'koko-idle');
     }
 
     VERSES.forEach((v, vi) => {
@@ -112,7 +117,7 @@ export const songScreen = {
         class: 'vbtn',
         onpointerdown: (ev) => {
           ev.stopPropagation();
-          au.currentTime = Math.max(0, LINE_STARTS[vi * 4] - 0.05);
+          au.currentTime = Math.max(0, timing.starts[vi * 4] - 0.05);
           pieceEnd = null;
           play();
         },

@@ -1,6 +1,6 @@
 // 빈칸 채우기: 동물 이름의 첫 자음이 빈칸. 알맞은 자음을 빈칸에 끌어다 놓거나 톡 눌러서 채운다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 

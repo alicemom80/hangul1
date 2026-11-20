@@ -1,6 +1,6 @@
 // 박수 놀이: 동물 이름을 글자(박)마다 한 번씩 박수. 코코를 톡 누르면 짝! 하고 글자가 켜진다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';
 

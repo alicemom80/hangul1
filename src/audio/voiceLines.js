@@ -3,7 +3,7 @@
 // 사람이 보는 목록: docs/음성 목록.md (npm run voice:list 로 다시 만든다)
 import * as S from './script.js';
 import { MISSIONS } from '../app/playtime.js';
-import { ANIMALS, ACTIVITIES } from '../data/zoo1.js';
+import { ANIMALS, ACTIVITIES } from '@권자료';
 
 const line = (group, id, text) => ({ group, id, text });
 

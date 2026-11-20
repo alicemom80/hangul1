@@ -1,18 +1,33 @@
 // 이름표 붙이기: 이름표를 끌어서 알맞은 동물 팻말에 붙인다. 이름표를 잡으면 이름을 읽어 준다.
 import { h, art } from '@공통/widgets/dom.js';
-import { ANIMALS } from '../data/zoo1.js';
+import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 
-const GROUP = 3; // 한 번에 보여 주는 동물 수 (6마리를 3마리씩 두 판)
+const GROUP = 3; // 한 번에 보여 주는 동물은 최대 이만큼 (6마리면 3+3, 7마리면 3+2+2)
 const HINT_AFTER_WRONG = 2;
 const nameOf = (key) => ANIMALS.find((a) => a.key === key).name;
+
+/** 목록을 한 판에 max개 이하로, 판마다 개수가 비슷하게 나눈다 */
+export function splitEven(list, max) {
+  const count = Math.ceil(list.length / max);
+  const base = Math.floor(list.length / count);
+  const extra = list.length % count;
+  let from = 0;
+  return Array.from({ length: count }, (_, i) => {
+    const size = base + (i < extra ? 1 : 0);
+    const part = list.slice(from, from + size);
+    from += size;
+    return part;
+  });
+}
 
 export const tagScreen = defineGame({
   background: 'tag-bg',
   build(field, app, ctx) {
     const all = shuffle(ANIMALS);
-    const groups = [all.slice(0, GROUP), all.slice(GROUP)];
+    const groups = splitEven(all, GROUP);
+    const doneBefore = (r) => groups.slice(0, r).reduce((sum, g) => sum + g.length, 0);
     let round = 0;
     let placed = 0;
     let wrong = 0;
@@ -30,7 +45,7 @@ export const tagScreen = defineGame({
       placed = 0;
       wrong = 0;
       busy = false;
-      app.bar.setDots(round * GROUP, ANIMALS.length);
+      app.bar.setDots(doneBefore(round), ANIMALS.length);
       stands.replaceChildren(
         ...animals.map((a) =>
           h('div', { class: 'tg-stand', 'data-key': a.key },
@@ -48,7 +63,7 @@ export const tagScreen = defineGame({
       busy = true;
       app.sfx.yes();
       round += 1;
-      app.bar.setDots(round * GROUP, ANIMALS.length);
+      app.bar.setDots(doneBefore(round), ANIMALS.length);
       if (!(await ctx.wait(700))) return;
       if (round >= groups.length) app.finish('tag');
       else startRound();

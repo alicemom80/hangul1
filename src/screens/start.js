@@ -3,8 +3,9 @@ import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { ANIMALS, VOLUME } from '@권자료';
 import { GREETING } from '../audio/script.js';
 import { openInDefaultBrowser } from '../app/inapp.js';
-import { playIntro } from './intro.js';
+import { playIntro, preloadIntro } from './intro.js';
 
+const GREETING_DELAY_MS = 800; // 영상이 사라지고 효과음이 울린 뒤에 인사
 const MOVE_WAIT_MS = 1500; // 기본 브라우저가 열렸다면 이 안에 이 화면은 가려진다. 그대로면 열기가 막힌 것
 
 /**
@@ -41,8 +42,11 @@ export const startScreen = {
     const begin = () => {
       enterFullscreen();
       app.startSound();
-      app.go('menu');
-      app.say(GREETING);
+      // ▶ 를 누르면 오프닝 영상이 나오고, 끝나면 놀이 고르기로 넘어간다
+      playIntro(() => {
+        app.go('menu');
+        setTimeout(() => app.say(GREETING), GREETING_DELAY_MS);
+      });
     };
     const start = () => {
       // 카카오톡 같은 앱 안 브라우저면 휴대폰의 기본 브라우저로 다시 열어 준다
@@ -65,6 +69,6 @@ export const startScreen = {
       h('div', { class: 'credit above', 'aria-hidden': 'true' }, h('i', { class: 'igicon' }), 'instagram ', h('b', {}, '@alicemom80')),
       h('div', { class: 'copyright', 'aria-hidden': 'true' }, '© 2026 alicemom80. All rights reserved.'),
     );
-    playIntro(root); // 처음 한 번은 오프닝 영상이 위에 덮였다가 끝나면 이 화면이 나타난다
+    preloadIntro(); // 오프닝 영상을 미리 받아 둔다
   },
 };

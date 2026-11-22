@@ -300,15 +300,16 @@
   padding: 2.4cqh;
   box-shadow: 0 0.8cqh 0 rgba(58, 42, 28, 0.25);
 }
+/* 놀이판 가로는 160cqh(16:10 전체 화면). 카드 3장이 그 안에 들어와야 한다: 54 + 31×3 + 3×2 = 153 */
 .sd-cards {
   position: absolute;
-  left: 58cqh;
+  left: 54cqh;
   top: 22cqh;
   display: flex;
-  gap: 4cqh;
+  gap: 3cqh;
 }
 .sd-card {
-  width: 34cqh;
+  width: 31cqh;
   height: 56cqh;
   display: flex;
   flex-direction: column;
@@ -328,7 +329,8 @@
 }
 .sd-card .lbl {
   margin-top: 1.4cqh;
-  font-size: calc((9cqh) * var(--ts, 1));
+  font-size: calc((8.4cqh) * var(--ts, 1));
+  white-space: nowrap; /* 긴 이름(조랑말·반달곰)도 한 줄로 */
   line-height: 1;
   color: var(--ink);
 }

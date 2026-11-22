@@ -46,20 +46,20 @@
   to { transform: translateY(calc(var(--u) * -1.1)) rotate(3deg); }
 }
 /* 첫소리 글자 팝업 */
-.song .big { position: absolute; left: calc(var(--u) * 14); top: calc(var(--u) * 7); width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: #fff6c9; border: calc(var(--u) * 0.5) solid #3b4660; display: flex; align-items: center; justify-content: center; font-size: calc(var(--u) * 11); color: #ff4f87; transform: scale(0); transition: transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.song .big { position: absolute; left: calc(var(--u) * 14); top: calc(var(--u) * 7); width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: #fff6c9; border: calc(var(--u) * 0.5) solid #3b4660; display: flex; align-items: center; justify-content: center; font-size: calc((calc(var(--u) * 11)) * var(--ts, 1)); color: #ff4f87; transform: scale(0); transition: transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1); }
 .song .big.on { transform: scale(1); }
 /* 절 버튼 */
 .song .vb { position: absolute; left: 50%; top: calc(var(--u) * 2.2); transform: translateX(-50%); display: flex; gap: var(--u); }
-.song .vbtn { width: calc(var(--u) * 5.4); height: calc(var(--u) * 5.4); border-radius: 50%; border: calc(var(--u) * 0.35) solid #3b4660; background: #fff; color: #7b88a5; font-size: calc(var(--u) * 2.9); display: flex; align-items: center; justify-content: center; }
+.song .vbtn { width: calc(var(--u) * 5.4); height: calc(var(--u) * 5.4); border-radius: 50%; border: calc(var(--u) * 0.35) solid #3b4660; background: #fff; color: #7b88a5; font-size: calc((calc(var(--u) * 2.9)) * var(--ts, 1)); display: flex; align-items: center; justify-content: center; }
 .song .vbtn.on { background: #ff7aa8; color: #fff; transform: scale(1.15); }
 /* 가사 판 */
 .song .lyric { position: absolute; left: calc(var(--u) * 11); right: calc(var(--u) * 11); bottom: calc(var(--u) * 2.2); height: calc(var(--u) * 17.4); background: rgba(255, 255, 255, 0.93); border: calc(var(--u) * 0.45) solid #3b4660; border-radius: calc(var(--u) * 3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--u) * 0.5); padding-top: calc(var(--u) * 2.4); }
 .song .cur { display: flex; gap: calc(var(--u) * 2.6); align-items: flex-end; justify-content: center; white-space: nowrap; }
 .song .word { display: flex; gap: calc(var(--u) * 0.15); }
-.song .sy { position: relative; display: inline-block; font-size: var(--fs, calc(var(--u) * 7.2)); line-height: 1.05; padding: 0 calc(var(--u) * 0.2); cursor: pointer; }
+.song .sy { position: relative; display: inline-block; font-size: calc((var(--fs, calc(var(--u) * 7.2))) * var(--ts, 1)); line-height: 1.05; padding: 0 calc(var(--u) * 0.2); cursor: pointer; }
 .song .sy .b { color: #7b88a5; }
 .song .sy .f { position: absolute; left: calc(var(--u) * 0.2); top: 0; overflow: hidden; width: 0; color: #ff4f87; white-space: nowrap; }
-.song .sy i { position: absolute; left: 50%; top: calc(var(--u) * -1.7); transform: translateX(-50%) scale(1); font-style: normal; font-size: calc(var(--u) * 2); width: calc(var(--u) * 2.7); height: calc(var(--u) * 2.7); border-radius: 50%; background: #ffe27a; color: #c43a6a; display: flex; align-items: center; justify-content: center; border: calc(var(--u) * 0.2) solid #3b4660; transition: transform 0.15s; }
+.song .sy i { position: absolute; left: 50%; top: calc(var(--u) * -1.7); transform: translateX(-50%) scale(1); font-style: normal; font-size: calc((calc(var(--u) * 2)) * var(--ts, 1)); width: calc(var(--u) * 2.7); height: calc(var(--u) * 2.7); border-radius: 50%; background: #ffe27a; color: #c43a6a; display: flex; align-items: center; justify-content: center; border: calc(var(--u) * 0.2) solid #3b4660; transition: transform 0.15s; }
 .song .sy.act i { transform: translateX(-50%) scale(1.45); }
 .song .sy.act { animation: pop 0.3s ease-out; }
 @keyframes pop {
@@ -67,9 +67,9 @@
   40% { transform: scale(1.18); }
   100% { transform: scale(1); }
 }
-.song .nxt { font-size: calc(var(--u) * 3.1); color: #b6c0d6; white-space: nowrap; min-height: calc(var(--u) * 3.4); }
+.song .nxt { font-size: calc((calc(var(--u) * 3.1)) * var(--ts, 1)); color: #b6c0d6; white-space: nowrap; min-height: calc(var(--u) * 3.4); }
 /* 둥근 버튼 */
-.song .rb { position: absolute; border: calc(var(--u) * 0.45) solid #3b4660; border-radius: 50%; background: #ff7aa8; color: #fff; font-size: calc(var(--u) * 4.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 calc(var(--u) * 0.5) 0 #3b4660; }
+.song .rb { position: absolute; border: calc(var(--u) * 0.45) solid #3b4660; border-radius: 50%; background: #ff7aa8; color: #fff; font-size: calc((calc(var(--u) * 4.2)) * var(--ts, 1)); display: flex; align-items: center; justify-content: center; box-shadow: 0 calc(var(--u) * 0.5) 0 #3b4660; }
 .song .rb:active { transform: translateY(calc(var(--u) * 0.4)); }
 .song .pp { left: calc(var(--u) * 2.2); top: calc(var(--u) * 2.2); width: calc(var(--u) * 8); height: calc(var(--u) * 8); }
 /* 뒤로가기 버튼: 다른 놀이의 .bar .backbtn과 같은 크기·자리 (오른쪽 아래) */

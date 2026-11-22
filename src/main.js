@@ -20,6 +20,7 @@ import { createToast } from './widgets/toast.js';
 import { createTopbar } from './widgets/topbar.js';
 import { createParentMenu } from './widgets/parentMenu.js';
 import { registerOffline } from './app/offline.js';
+import { watchTextScale } from './app/textScale.js';
 import { finishActivity } from './app/rewards.js';
 import { startScreen } from './screens/start.js';
 import { menuScreen } from './screens/menu.js';
@@ -36,6 +37,8 @@ import { bookScreen } from './screens/book.js';
 import { lockScreen } from './screens/lock.js';
 
 setArtLookup(artUrl); // 공통 코드가 이 앱의 그림 목록을 쓰도록 등록한다
+watchTextScale(); // 기기의 글자 크기 설정이 글자만 키워서 칸 밖으로 나가는 것을 되돌린다
+watchTextScale(); // 기기의 글자 크기 설정이 글자만 키워서 칸 밖으로 나가는 것을 되돌린다
 
 const $ = (id) => document.getElementById(id);
 

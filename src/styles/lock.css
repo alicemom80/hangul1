@@ -34,11 +34,11 @@
 }
 .lock p {
   margin: 0;
-  font-size: 5cqh;
+  font-size: calc((5cqh) * var(--ts, 1));
   position: relative;
 }
 .lock p.mission {
-  font-size: 3.6cqh;
+  font-size: calc((3.6cqh) * var(--ts, 1));
   color: #ffe07a;
   background: rgba(10, 16, 40, 0.5);
   padding: 0.8cqh 3cqh;
@@ -48,7 +48,7 @@
   position: absolute;
   left: 58%;
   top: 14cqh;
-  font-size: 6cqh;
+  font-size: calc((6cqh) * var(--ts, 1));
   animation: float 3s ease-in-out infinite;
 }
 @keyframes float {
@@ -63,7 +63,7 @@
   position: relative;
   background: rgba(10, 16, 40, 0.55);
   color: #fff;
-  font-size: 3cqh;
+  font-size: calc((3cqh) * var(--ts, 1));
   padding: 1.4cqh 4cqh;
   border-radius: 4cqh;
   overflow: hidden;
@@ -113,10 +113,10 @@
 .panel h3 {
   margin: 0;
   font-weight: 400;
-  font-size: 4.6cqh;
+  font-size: calc((4.6cqh) * var(--ts, 1));
 }
 .panel .left {
-  font-size: 3cqh;
+  font-size: calc((3cqh) * var(--ts, 1));
   color: var(--soft);
   margin-bottom: 0.6cqh;
 }
@@ -125,7 +125,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 2cqh;
-  font-size: 3.2cqh;
+  font-size: calc((3.2cqh) * var(--ts, 1));
   border-top: 0.25cqh solid #eee3cf;
   padding-top: 1.4cqh;
 }
@@ -137,7 +137,7 @@
   background: #f2e7d2;
   border-radius: 2.4cqh;
   padding: 1cqh 2.6cqh;
-  font-size: 3cqh;
+  font-size: calc((3cqh) * var(--ts, 1));
   white-space: nowrap;
 }
 .row a.ig {
@@ -146,7 +146,7 @@
   text-decoration: none;
   border-radius: 2.4cqh;
   padding: 1cqh 2.6cqh;
-  font-size: 3cqh;
+  font-size: calc((3cqh) * var(--ts, 1));
   white-space: nowrap;
 }
 .row button.on {
@@ -163,7 +163,7 @@
   background: #f2e7d2;
   border-radius: 3cqh;
   padding: 1.2cqh 5cqh;
-  font-size: 3.2cqh;
+  font-size: calc((3.2cqh) * var(--ts, 1));
 }
 
 @media (prefers-reduced-motion: reduce) {

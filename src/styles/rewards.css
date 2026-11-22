@@ -6,8 +6,8 @@
 .rw-sticker { position: relative; width: 52cqh; height: 52cqh; animation: pop-in 0.7s cubic-bezier(0.3, 1.6, 0.5, 1); }
 .rw-slot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .rw-animal { position: absolute; left: 50%; top: 50%; max-width: 66%; max-height: 66%; transform: translate(-50%, -50%); }
-.rw-text { margin: 0; position: relative; font-size: 5cqh; color: var(--ink); background: rgba(255, 255, 255, 0.85); border-radius: 4cqh; padding: 0.8cqh 3.4cqh; }
-.rw-text b { color: var(--coral); font-weight: 400; font-size: 6.4cqh; }
+.rw-text { margin: 0; position: relative; font-size: calc((5cqh) * var(--ts, 1)); color: var(--ink); background: rgba(255, 255, 255, 0.85); border-radius: 4cqh; padding: 0.8cqh 3.4cqh; }
+.rw-text b { color: var(--coral); font-weight: 400; font-size: calc((6.4cqh) * var(--ts, 1)); }
 .reward .rbtn { position: relative; width: 14cqh; height: 14cqh; }
 @keyframes pop-in { from { transform: scale(0) rotate(-20deg); } }
 /* 스티커북 */
@@ -20,12 +20,13 @@
 .slot-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .slot-pic { position: absolute; left: 50%; top: 50%; max-width: 66%; max-height: 66%; transform: translate(-50%, -50%); }
 .slot.miss .slot-pic { filter: brightness(0); opacity: 0.13; }
-.slot-letter { position: absolute; right: 5cqh; bottom: 3cqh; font-size: 7cqh; color: var(--coral); text-shadow: 0.3cqh 0.3cqh 0 #fff, -0.3cqh 0.3cqh 0 #fff, 0.3cqh -0.3cqh 0 #fff, -0.3cqh -0.3cqh 0 #fff; }
+.slot-letter { position: absolute; right: 5cqh; bottom: 3cqh; font-size: calc((7cqh) * var(--ts, 1)); color: var(--coral); text-shadow: 0.3cqh 0.3cqh 0 #fff, -0.3cqh 0.3cqh 0 #fff, 0.3cqh -0.3cqh 0 #fff, -0.3cqh -0.3cqh 0 #fff; }
 .bookclose { position: absolute; right: 3cqh; top: 3cqh; width: 12cqh; height: 12cqh; }
 /* 스티커북 쪽 넘기기: 칸 아래 가운데 */
 .bk-nav { position: absolute; left: 50%; bottom: 1.4cqh; transform: translateX(-50%); display: flex; align-items: center; gap: 3cqh; }
 .bk-arrow { width: 9cqh; height: 9cqh; padding: 0; border: 0; background: none; }
 .bk-arrow .ico { width: 100%; height: 100%; }
+.bk-arrow.next .ico { transform: scaleX(-1); }
 .bk-arrow:disabled { opacity: 0.25; pointer-events: none; }
-.bk-page { min-width: 14cqh; text-align: center; font-size: 5cqh; color: var(--ink); }
+.bk-page { min-width: 14cqh; text-align: center; font-size: calc((5cqh) * var(--ts, 1)); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .rw-sticker { animation: none; } }

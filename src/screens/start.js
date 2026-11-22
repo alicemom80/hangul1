@@ -62,7 +62,7 @@ export const startScreen = {
     root.addEventListener('pointerdown', enterFullscreen, { once: true });
     root.append(
       ...FLOATERS.map(([ch, x, y, size, color, delay]) =>
-        h('span', { class: 'floater', 'aria-hidden': 'true', style: `left:${x}%;top:${y}%;font-size:${size}cqh;color:${color};animation-delay:${delay}s` }, ch)),
+        h('span', { class: 'floater', 'aria-hidden': 'true', style: `left:${x}%;top:${y}%;font-size:calc(${size}cqh * var(--ts, 1));color:${color};animation-delay:${delay}s` }, ch)),
       art('character', 'koko-wave', { class: 'hero', alt: '코코' }),
       h('h1', {}, VOLUME.title, h('small', {}, VOLUME.subtitle)),
       roundButton('play', '시작', start),

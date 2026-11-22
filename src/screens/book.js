@@ -35,7 +35,7 @@ export const bookScreen = {
     const prev = h('button', { class: 'bk-arrow press', 'aria-label': '앞 쪽', onclick: () => turn(-1) },
       art('icon', 'back', { class: 'ico' }));
     const next = h('button', { class: 'bk-arrow next press', 'aria-label': '다음 쪽', onclick: () => turn(1) },
-      art('icon', 'play', { class: 'ico' }));
+      art('icon', 'back', { class: 'ico' })); // 앞 쪽 버튼과 같은 주황 버튼을 좌우로 뒤집어 쓴다
 
     function show() {
       grid.replaceChildren(...STICKERS.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(slotOf));

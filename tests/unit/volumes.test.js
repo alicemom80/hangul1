@@ -6,6 +6,7 @@ import * as vol3 from '../../src/data/zoo3.js';
 import { estimateTiming, hasTiming, initialOf } from '../../src/data/zooCommon.js';
 import { splitEven } from '../../src/games/tag.js';
 import { artUrl } from '../../src/art/registry.js';
+import { existsSync } from 'node:fs';
 
 const VOLUMES = [['1권', vol1, 6], ['2권', vol2, 6], ['3권', vol3, 7]];
 
@@ -101,5 +102,33 @@ describe('이름표 붙이기 판 나누기', () => {
   });
   test('섞지 않고 순서대로 다 담는다', () => {
     expect(splitEven([1, 2, 3, 4, 5, 6, 7], 3).flat()).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
+});
+
+describe('스티커 동물 (이 권 동물 + 덤)', () => {
+  const stickersOf = (v) => v.STICKERS.map((a) => a.key);
+
+  test('이 권 동물이 앞에 오고, 덤 동물에는 이름이 있다', () => {
+    [vol1, vol2, vol3].forEach((v) => {
+      expect(stickersOf(v).slice(0, v.ANIMALS.length)).toEqual(v.ANIMALS.map((a) => a.key));
+      v.STICKERS.forEach((a) => expect(a.name, a.key).toMatch(/\S/));
+      expect(new Set(stickersOf(v)).size).toBe(v.STICKERS.length);
+    });
+  });
+
+  test('1·2·3권 스티커가 서로 겹치지 않는다 (같은 동물이 두 권에 들어가지 않게)', () => {
+    const all = [vol1, vol2, vol3].flatMap(stickersOf);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  test('권마다 30마리 이상이고 서로 비슷한 수로 나뉜다', () => {
+    const sizes = [vol1, vol2, vol3].map((v) => v.STICKERS.length);
+    sizes.forEach((n) => expect(n).toBeGreaterThanOrEqual(30));
+    expect(Math.max(...sizes) - Math.min(...sizes)).toBeLessThanOrEqual(2);
+  });
+
+  test('스티커마다 그림 파일(public/images/characters/<key>.webp)이 있다', () => {
+    [vol1, vol2, vol3].flatMap((v) => v.STICKERS).forEach((a) =>
+      expect(existsSync(new URL(`../../public/images/characters/${a.key}.webp`, import.meta.url)), a.key).toBe(true));
   });
 });

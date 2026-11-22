@@ -1,7 +1,8 @@
 // 3권 자료: 동물원 친구 7마리(ㄹ ㅇ + 쌍자음 ㄲ ㄸ ㅃ ㅆ ㅉ)와 노래 가사. 화면과 상관없는 순수한 자료.
 // 가사는 노래를 만들기 위한 "초안"이다. 노래를 만든 뒤 실제 가사에 맞게 VERSES 를 고치고,
 // 박자(LINE_STARTS)는 tools/박자찍기.html 로 찍어서 넣는다. 박자를 비워 두면 노래 길이에 맞춘 대략의 박자로 나온다.
-import { makeAnimals, makeLines, ACTIVITIES, ACTIVITY_KEYS, initialOf } from './zooCommon.js';
+import { makeAnimals, makeStickers, makeLines, ACTIVITIES, ACTIVITY_KEYS, initialOf } from './zooCommon.js';
+import { STICKER_EXTRAS } from './stickerExtras.js';
 
 export { ACTIVITIES, ACTIVITY_KEYS, initialOf };
 
@@ -27,6 +28,10 @@ export const ANIMALS = makeAnimals([
 ]);
 
 export const animalOf = (key) => ANIMALS.find((a) => a.key === key);
+
+/** 스티커 보상으로 받을 수 있는 동물 전체 (이 권 동물 + 덤). 이름은 stickerOf 로 찾는다 */
+export const STICKERS = makeStickers(ANIMALS, STICKER_EXTRAS[3]);
+export const stickerOf = (key) => STICKERS.find((a) => a.key === key);
 export const MENU_PAGE_SIZE = 6;
 
 /** 노래 가사 초안: 동물 7마리 × 4줄 = 28줄. t = 첫소리 초성 번호 (ㄹ5 ㅇ11 ㄲ1 ㄸ4 ㅃ8 ㅆ10 ㅉ13) */

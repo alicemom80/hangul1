@@ -3,7 +3,7 @@
 // 사람이 보는 목록: docs/음성 목록.md (npm run voice:list 로 다시 만든다)
 import * as S from './script.js';
 import { MISSIONS } from '../app/playtime.js';
-import { ANIMALS, ACTIVITIES } from '@권자료';
+import { ANIMALS, STICKERS, ACTIVITIES } from '@권자료';
 
 const line = (group, id, text) => ({ group, id, text });
 
@@ -45,13 +45,13 @@ function build() {
     line('빈칸 채우기', 'blank-wrong', S.BLANK_WRONG),
     ...ANIMALS.map((a) => line('빈칸 채우기', `blank-right-${a.key}`, S.blankRight(a))),
 
-    ...ANIMALS.map((a) => line('동물·스티커', `name-${a.key}`, a.name)),
+    ...STICKERS.map((a) => line('동물·스티커', `name-${a.key}`, a.name)),
     ...S.PRAISE.map((p, i) => line('칭찬', `praise-${i + 1}`, p)),
-    ...ANIMALS.flatMap((a) => [
+    ...STICKERS.flatMap((a) => [
       line('동물·스티커', `sticker-${a.key}`, S.stickerLine(a.name, true)),
       line('동물·스티커', `sticker-again-${a.key}`, S.stickerLine(a.name, false)),
     ]),
-    ...Array.from({ length: ANIMALS.length + 1 }, (_, n) => line('동물·스티커', `book-${n}`, S.bookCount(n))),
+    ...Array.from({ length: STICKERS.length + 1 }, (_, n) => line('동물·스티커', `book-${n}`, S.bookCount(n))),
     line('동물·스티커', 'not-met', S.NOT_MET),
 
     line('시간·잠금', 'warn-1min', S.WARN_TEXT),

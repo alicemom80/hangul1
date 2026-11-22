@@ -2,13 +2,13 @@
 import { h, art, roundButton } from '@공통/widgets/dom.js';
 import { stickerLine } from '../audio/script.js';
 import { stopVoice } from '../audio/voice.js';
-import { animalOf } from '@권자료';
+import { stickerOf } from '@권자료';
 
 export const rewardScreen = {
   showBar: false,
   background: 'savanna-base',
   render(root, app, { sticker, isNew }) {
-    const animal = animalOf(sticker.key);
+    const animal = stickerOf(sticker.key);
     const next = () => {
       app.sfx.pop();
       if (app.isTimeOver()) app.lock({ name: 'menu', params: {} });
@@ -20,7 +20,8 @@ export const rewardScreen = {
       h('div', { class: 'rw-sticker' },
         art('prop', 'slot', { class: 'rw-slot' }),
         art('character', animal.key, { class: 'rw-animal', alt: animal.name })),
-      h('p', { class: 'rw-text' }, h('b', {}, animal.letter), ` ${stickerLine(animal.name, isNew)}`),
+      // 덤 동물은 자음이 없다
+      h('p', { class: 'rw-text' }, animal.letter ? h('b', {}, animal.letter) : null, `${animal.letter ? ' ' : ''}${stickerLine(animal.name, isNew)}`),
       roundButton('play', '메뉴로', next),
     );
     app.sfx.yes();

@@ -1,6 +1,7 @@
 // 1권 자료: 동물원 친구 6마리와 자음, 노래 가사. 화면과 상관없는 순수한 자료.
 // 2권·3권은 같은 모양으로 data/zoo2.js, zoo3.js 에 있다. 앱은 권 번호(VOLUME 환경변수)에 맞는 파일 하나만 쓴다.
-import { makeAnimals, makeLines, ACTIVITIES, ACTIVITY_KEYS, initialOf } from './zooCommon.js';
+import { makeAnimals, makeStickers, makeLines, ACTIVITIES, ACTIVITY_KEYS, initialOf } from './zooCommon.js';
+import { STICKER_EXTRAS } from './stickerExtras.js';
 
 export { ACTIVITIES, ACTIVITY_KEYS, initialOf };
 
@@ -27,6 +28,10 @@ export const ANIMALS = makeAnimals([
 ]);
 
 export const animalOf = (key) => ANIMALS.find((a) => a.key === key);
+
+/** 스티커 보상으로 받을 수 있는 동물 전체 (이 권 동물 + 덤). 이름은 stickerOf 로 찾는다 */
+export const STICKERS = makeStickers(ANIMALS, STICKER_EXTRAS[1]);
+export const stickerOf = (key) => STICKERS.find((a) => a.key === key);
 
 /** 메뉴 첫 쪽 크기 (지금 메뉴는 한 쪽에 8개라 쓰이지 않는다) */
 export const MENU_PAGE_SIZE = 6;

@@ -521,12 +521,21 @@
   font-size: 9cqh;
   color: var(--ink);
 }
+/* 힌트: 팻말이 움직이면 맞추기 어려워서, 가만히 노랗게 빛나기만 한다 */
 .tg-stand.hint .tg-sign {
-  animation: pulse 0.6s ease-in-out infinite;
   filter: drop-shadow(0 0 1.4cqh #ffd23f);
 }
 .tg-stand.done .tg-animal {
   animation: bob 0.6s ease-in-out infinite;
+}
+/* 틀린 팻말의 동물이 폴짝 뛴다 */
+.tg-stand.jump .tg-animal {
+  animation: tg-jump 0.55s ease-out;
+}
+@keyframes tg-jump {
+  30% { transform: translateX(-50%) translateY(-9cqh); }
+  55% { transform: translateX(-50%) translateY(0); }
+  75% { transform: translateX(-50%) translateY(-3.5cqh); }
 }
 .tg-tray {
   position: absolute;
@@ -555,7 +564,6 @@
   filter: drop-shadow(0 0.8cqh 0.8cqh rgba(0, 0, 0, 0.3));
 }
 .tg-tag.hint {
-  animation: pulse 0.6s ease-in-out infinite;
   filter: drop-shadow(0 0 1.4cqh #ffd23f);
 }
 .tg-text {

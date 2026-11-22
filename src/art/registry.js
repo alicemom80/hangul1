@@ -1,12 +1,12 @@
 // 그림 목록: 이름 → 파일 위치. 그림을 바꿀 때는 public/images 안의 파일만 같은 이름으로 바꾸면 된다.
 
-import { ANIMALS, VOLUME } from '@권자료';
+import { STICKERS, VOLUME } from '@권자료';
 
 const BASE = `${import.meta.env.BASE_URL}images/`;
 
-// 그려 둔 캐릭터 (webp): 이 권의 동물 친구들(권 자료의 ANIMALS, 파일 이름 = 동물 key) + 코코 자세 8개
+// 그려 둔 캐릭터 (webp): 이 권의 동물 친구들과 스티커 동물(권 자료의 STICKERS, 파일 이름 = 동물 key) + 코코 자세 8개
 const CHARACTERS = [
-  ...ANIMALS.map((a) => a.key),
+  ...STICKERS.map((a) => a.key),
   'koko-idle', 'koko-hands', 'koko-ask', 'koko-cheer', 'koko-wave', 'koko-sleepy', 'koko-clap', 'koko-listen',
 ];
 const ICONS_SVG = ['play', 'check', 'home', 'close', 'lock', 'back'];

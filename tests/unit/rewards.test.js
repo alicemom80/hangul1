@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { finishActivity } from '../../src/app/rewards.js';
 import { DEFAULT_PROGRESS, freezeProgress } from '../../src/storage/progress.js';
-import { ANIMALS } from '../../src/data/zoo1.js';
+import { STICKERS } from '../../src/data/zoo1.js';
 
 const base = (change = {}) => freezeProgress({ ...DEFAULT_PROGRESS, day: '2026-10-21', ...change });
 
@@ -14,14 +14,14 @@ describe('놀이를 끝낼 때 스티커', () => {
   });
 
   test('이미 모은 동물은 건너뛰고 못 모은 동물만 준다', () => {
-    const have = ANIMALS.slice(0, 5).map((a) => a.key);
+    const have = STICKERS.slice(0, STICKERS.length - 1).map((a) => a.key);
     const r = finishActivity(base({ stickers: have }), 'song', () => 0.99);
-    expect(r.sticker.key).toBe(ANIMALS[5].key);
-    expect(r.progress.stickers).toHaveLength(6);
+    expect(r.sticker.key).toBe(STICKERS.at(-1).key);
+    expect(r.progress.stickers).toHaveLength(STICKERS.length);
   });
 
-  test('6마리를 다 모았으면 "또" 받는다 (목록은 그대로)', () => {
-    const all = ANIMALS.map((a) => a.key);
+  test('스티커 동물을 다 모았으면 "또" 받는다 (목록은 그대로)', () => {
+    const all = STICKERS.map((a) => a.key);
     const r = finishActivity(base({ stickers: all }), 'tag', () => 0);
     expect(r.isNew).toBe(false);
     expect(r.progress.stickers).toEqual(all);

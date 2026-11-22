@@ -6,6 +6,7 @@ import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 
 const GROUP = 3; // 한 번에 보여 주는 동물은 최대 이만큼 (6마리면 3+3, 7마리면 3+2+2)
 const HINT_AFTER_WRONG = 2;
+const JUMP_MS = 600; // play.css 의 tg-jump 시간(0.55초)보다 조금 길게
 const nameOf = (key) => ANIMALS.find((a) => a.key === key).name;
 
 /** 목록을 한 판에 max개 이하로, 판마다 개수가 비슷하게 나눈다 */
@@ -69,6 +70,14 @@ export const tagScreen = defineGame({
       else startRound();
     }
 
+    /** 동물을 한 번 폴짝 뛰게 한다 (연달아 틀려도 매번 다시 뛴다) */
+    function jump(stand) {
+      stand.classList.remove('jump');
+      void stand.offsetWidth; // 애니메이션을 처음부터 다시 시작
+      stand.classList.add('jump');
+      setTimeout(() => stand.classList.remove('jump'), JUMP_MS);
+    }
+
     function drop(tag, x, y) {
       if (busy) return;
       const stand = elementAt(x, y, '.tg-stand');
@@ -87,6 +96,7 @@ export const tagScreen = defineGame({
       }
       wrong += 1; // 틀려도 감점 없음
       app.sfx.boing();
+      jump(stand); // 틀린 팻말의 동물이 폴짝
       ctx.say(S.TAG_WRONG);
       if (wrong >= HINT_AFTER_WRONG) {
         standOf(key)?.classList.add('hint');

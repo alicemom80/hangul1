@@ -1,7 +1,7 @@
 // 부모님 메뉴 (자물쇠 1초 누르기로 열림). 부모님용이라 글자로 된 메뉴.
 import { h } from '@공통/widgets/dom.js';
 import { remainingMs, MINUTE, moreTimeChange, testLimitChange, resetChange } from '../app/playtime.js';
-import { ANIMALS } from '@권자료';
+import { STICKERS } from '@권자료';
 
 const MORE_MINUTES = 15;
 const DEFAULT_LIMIT_MIN = 15;
@@ -56,7 +56,7 @@ export function createParentMenu(stage, app) {
       'div',
       { class: 'panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': '부모님 메뉴' },
       h('h3', {}, '부모님 메뉴'),
-      h('div', { class: 'left' }, `오늘 남은 놀이 시간: 약 ${left}분 · 스티커 ${p.stickers.length}/${ANIMALS.length}`),
+      h('div', { class: 'left' }, `오늘 남은 놀이 시간: 약 ${left}분 · 스티커 ${p.stickers.length}/${STICKERS.length}`),
       row('놀이 시간', h('button', { onclick: () => apply((q) => moreTimeChange(q, MORE_MINUTES), `${MORE_MINUTES}분 더 놀 수 있어요`) }, `${MORE_MINUTES}분 더 놀기`)),
       row(
         '시간 제한',

@@ -12,7 +12,8 @@ const DATA_URL = dataFileUrl(VOLUME);
 const data = Object.fromEntries(await Promise.all(
   VOLUME_IDS.map(async (id) => [id, await import(dataFileUrl(id).href)]),
 ));
-const asInfo = (id) => ({ volume: data[id].VOLUME, animals: data[id].ANIMALS });
+// animals 에는 스티커 동물까지 넣는다 (다른 권의 스티커 그림도 이 권 빌드에서는 뺀다)
+const asInfo = (id) => ({ volume: data[id].VOLUME, animals: data[id].STICKERS });
 const volumeInfo = data[VOLUME].VOLUME;
 // 빌드 결과에서 뺄, 다른 권에만 쓰이는 파일
 const otherFiles = otherVolumeFiles(asInfo(VOLUME), VOLUME_IDS.filter((id) => id !== VOLUME).map(asInfo));

@@ -5,6 +5,13 @@
 export const makeAnimals = (list) =>
   Object.freeze(list.map((a) => Object.freeze({ ...a, first: a.name[0], syllables: Object.freeze([...a.name]) })));
 
+/**
+ * 스티커 목록 = 그 권의 동물(자음 있음) + 덤 동물(stickerExtras.js, 자음 없음). 놀이를 끝낼 때 이 중에서 받는다.
+ * 그 권 동물이 앞에 와서 스티커북 첫 쪽에 나온다.
+ */
+export const makeStickers = (animals, extras) =>
+  Object.freeze([...animals, ...extras.map((e) => Object.freeze({ ...e }))]);
+
 /** 놀이 8가지 (메뉴에서 위 줄 왼쪽→오른쪽, 아래 줄 왼쪽→오른쪽) */
 export const ACTIVITIES = Object.freeze([
   { key: 'song', name: '노래방' },

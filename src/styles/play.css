@@ -749,14 +749,15 @@
 .bl-word {
   display: flex;
   align-items: center;
-  font-size: calc((18cqh) * var(--ts, 1));
+  --bs: 18cqh; /* 칸·글자 자리의 기준 크기. em 대신 이것으로 정해서 글자 크기를 보정해도 칸은 그대로 */
+  font-size: calc(var(--bs) * var(--ts, 1));
   line-height: 1;
   color: var(--ink);
 }
 .bl-syl {
   display: block;
-  width: 1em;
-  height: 1em;
+  width: calc(var(--bs) * 1);
+  height: calc(var(--bs) * 1);
   line-height: 1;
   text-align: center;
 }
@@ -766,8 +767,8 @@
 /* 빈칸이 있는 글자: 자음 자리(빈칸)를 모음 모양에 맞는 자리에 둔다 */
 .bl-cell {
   position: relative;
-  width: 1em;
-  height: 1em;
+  width: calc(var(--bs) * 1);
+  height: calc(var(--bs) * 1);
 }
 .bl-cell > * {
   position: absolute;
@@ -781,24 +782,24 @@
   background: #e8ecff;
 }
 .bl-vow {
-  width: 0.5em;
-  height: 1em;
+  width: calc(var(--bs) * 0.5);
+  height: calc(var(--bs) * 1);
   display: grid;
   place-items: center;
 }
 /* 세로 모음(ㅏ ㅣ…): 빈칸은 왼쪽 위쪽, 모음은 오른쪽 */
-.bl-cell.v .bl-box { left: 0.08em; top: 0.2em; width: 0.46em; height: 0.6em; }
-.bl-cell.v .bl-vow { left: 0.44em; top: 0; }
+.bl-cell.v .bl-box { left: calc(var(--bs) * 0.08); top: calc(var(--bs) * 0.2); width: calc(var(--bs) * 0.46); height: calc(var(--bs) * 0.6); }
+.bl-cell.v .bl-vow { left: calc(var(--bs) * 0.44); top: 0; }
 /* 세로 모음 + 받침(낙): 빈칸은 왼쪽 위, 모음은 오른쪽 위, 받침은 아래 (작게 쓴 글자는 자기 크기 기준 em) */
-.bl-cell.vf .bl-box { left: 0.1em; top: 0.1em; width: 0.42em; height: 0.36em; }
-.bl-cell.vf .bl-vow { left: 0.65em; top: -0.015em; font-size: 0.66em; width: 0.76em; height: 1em; }
-.bl-cell.vf .bl-fin { left: 0.26em; top: 0.59em; font-size: 0.66em; width: 1em; }
+.bl-cell.vf .bl-box { left: calc(var(--bs) * 0.1); top: calc(var(--bs) * 0.1); width: calc(var(--bs) * 0.42); height: calc(var(--bs) * 0.36); }
+.bl-cell.vf .bl-vow { left: calc(var(--bs) * 0.429); top: calc(var(--bs) * -0.0099); font-size: 0.66em; width: calc(var(--bs) * 0.5016); height: calc(var(--bs) * 0.66); }
+.bl-cell.vf .bl-fin { left: calc(var(--bs) * 0.1716); top: calc(var(--bs) * 0.3894); font-size: 0.66em; width: calc(var(--bs) * 0.66); }
 /* 가로 모음(ㅗ ㅜ ㅡ): 빈칸은 위, 모음은 아래 */
-.bl-cell.h .bl-box { left: 0.1em; top: 0.08em; width: 0.8em; height: 0.46em; }
-.bl-cell.h .bl-vow { left: 0.14em; top: 0.19em; width: 0.72em; height: 0.5em; }
-.bl-cell.hf .bl-box { left: 0.1em; top: 0.04em; width: 0.8em; height: 0.34em; }
-.bl-cell.hf .bl-vow { left: 0.14em; top: 0.3em; width: 0.72em; height: 0.4em; font-size: 0.7em; }
-.bl-cell.hf .bl-fin { left: 0.17em; top: 0.62em; width: 0.66em; font-size: 0.66em; }
+.bl-cell.h .bl-box { left: calc(var(--bs) * 0.1); top: calc(var(--bs) * 0.08); width: calc(var(--bs) * 0.8); height: calc(var(--bs) * 0.46); }
+.bl-cell.h .bl-vow { left: calc(var(--bs) * 0.14); top: calc(var(--bs) * 0.19); width: calc(var(--bs) * 0.72); height: calc(var(--bs) * 0.5); }
+.bl-cell.hf .bl-box { left: calc(var(--bs) * 0.1); top: calc(var(--bs) * 0.04); width: calc(var(--bs) * 0.8); height: calc(var(--bs) * 0.34); }
+.bl-cell.hf .bl-vow { left: calc(var(--bs) * 0.098); top: calc(var(--bs) * 0.21); width: calc(var(--bs) * 0.504); height: calc(var(--bs) * 0.28); font-size: 0.7em; }
+.bl-cell.hf .bl-fin { left: calc(var(--bs) * 0.1122); top: calc(var(--bs) * 0.4092); width: calc(var(--bs) * 0.4356); font-size: 0.66em; }
 .bl-choices {
   position: absolute;
   left: 23cqh;

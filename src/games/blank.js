@@ -4,7 +4,7 @@ import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 
-const ROUNDS = 4;
+const ROUNDS = ANIMALS.length; // 이 권에서 배운 글자 모두
 const CHOICES = 4;
 const HINT_AFTER_WRONG = 2;
 

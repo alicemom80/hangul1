@@ -4,7 +4,7 @@ import { ANIMALS } from '@권자료';
 import * as S from '../audio/script.js';
 import { defineGame, enableDrag, elementAt, shuffle, el } from './kit.js';
 
-const ROUNDS = 3;
+const ROUNDS = 4;
 const WEDGES = ['top', 'right', 'bottom', 'left'];
 const POLY = {
   top: 'polygon(0 0,100% 0,50% 50%)',

@@ -8,7 +8,7 @@ import { defineGame, shuffle, el } from './kit.js';
 import { buildPath, pointAt, startTrace, pressTrace, moveTrace, releaseTrace, isDone } from './lineTrace.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const ROUNDS = 3;
+const ROUNDS = ANIMALS.length; // 이 권에서 배운 글자 모두
 const TOLERANCE = 11;
 const START_DOT = 5.5;
 const ARROW_AT = 12; // 시작 화살표를 놓는 거리 (길을 따라)

@@ -150,4 +150,4 @@ document.addEventListener('visibilitychange', () => {
 blockBackButton();
 router.go('start');
 clock.start();
-registerOffline();
+registerOffline({ canReload: () => router.current?.name === 'start' }); // 놀이 중에는 새 버전 적용을 미룬다

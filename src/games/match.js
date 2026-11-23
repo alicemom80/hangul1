@@ -5,31 +5,43 @@ import * as S from '../audio/script.js';
 import { defineGame, shuffle, el } from './kit.js';
 
 const PAIRS = 3;
+const ROUNDS = 2;
+const TOTAL = PAIRS * ROUNDS;
 const SHOW_MISS_MS = 900;
 
 export const matchScreen = defineGame({
   background: 'match-bg',
   build(field, app, ctx) {
-    const chosen = shuffle(ANIMALS).slice(0, PAIRS);
-    const deck = shuffle([...chosen, ...chosen]);
+    const order = shuffle(ANIMALS); // 판마다 다른 동물 3마리
+    let round = 0;
     let open = []; // 지금 뒤집어 둔 카드(최대 2장)
-    let found = 0;
+    let found = 0; // 두 판을 합친 맞춘 짝 수
+    let foundInRound = 0;
     let busy = false;
 
     const grid = el('div', 'mt-grid');
-    app.bar.setDots(0, PAIRS);
-
-    deck.forEach((animal) => {
-      const card = h(
-        'button',
-        { class: 'mcard', 'aria-label': '카드', onclick: () => flip(card, animal) },
-        h('div', { class: 'inner' },
-          h('div', { class: 'face back' }, art('prop', 'card-back')),
-          h('div', { class: 'face front' }, art('prop', 'card-front'), art('character', animal.key, { class: 'pic' }), h('span', { class: 'lbl' }, animal.name))),
-      );
-      grid.append(card);
-    });
     field.append(grid);
+    app.bar.setDots(0, TOTAL);
+
+    function startRound() {
+      const chosen = order.slice(round * PAIRS, (round + 1) * PAIRS);
+      foundInRound = 0;
+      open = [];
+      busy = false;
+      grid.replaceChildren(
+        ...shuffle([...chosen, ...chosen]).map((animal) => {
+          const card = h(
+            'button',
+            { class: 'mcard', 'aria-label': '카드', onclick: () => flip(card, animal) },
+            h('div', { class: 'inner' },
+              h('div', { class: 'face back' }, art('prop', 'card-back')),
+              h('div', { class: 'face front' }, art('prop', 'card-front'), art('character', animal.key, { class: 'pic' }), h('span', { class: 'lbl' }, animal.name))),
+          );
+          return card;
+        }),
+      );
+    }
+    startRound();
     setTimeout(() => ctx.alive() && ctx.say(S.MATCH_ASK), 300);
 
     async function flip(card, animal) {
@@ -48,14 +60,18 @@ export const matchScreen = defineGame({
         a.card.classList.add('match');
         b.card.classList.add('match');
         found += 1;
-        app.bar.setDots(found, PAIRS);
+        foundInRound += 1;
+        app.bar.setDots(found, TOTAL);
         app.sfx.yes();
         if (!(await ctx.say(S.matchFound(animal.name)))) return;
-        busy = false;
-        if (found === PAIRS) {
-          if (!(await ctx.wait(400))) return;
-          app.finish('match');
+        if (foundInRound < PAIRS) {
+          busy = false;
+          return;
         }
+        if (!(await ctx.wait(400))) return;
+        round += 1;
+        if (round >= ROUNDS) app.finish('match');
+        else startRound();
         return;
       }
       app.sfx.boing();
